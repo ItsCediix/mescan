@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MESCAN · Gesundheitsdashboard</title>
+<style>
+:root {
+  --bg:        #07090f;
+  --bg2:       #0c1020;
+  --bg3:       #111827;
+  --border:    rgba(120,150,200,0.07);
+  --border2:   rgba(120,150,200,0.13);
+  --teal:      #00c9a7;
+  --teal-dim:  rgba(0,201,167,0.12);
+  --blue:      #4f9cf9;
+  --amber:     #ffb340;
+  --pos:       #2fd180;
+  --pos-dim:   rgba(47,209,128,0.12);
+  --neg:       #ff5252;
+  --neg-dim:   rgba(255,82,82,0.12);
+  --neu-dim:   rgba(120,150,200,0.08);
+  --text:      #e8edf5;
+  --text2:     #7a8fa8;
+  --text3:     #3d5060;
+  --r:         12px;
+  --rl:        18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);
+  font-family:'Helvetica Neue',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;top:-20%;left:50%;transform:translateX(-50%);
+  width:900px;height:500px;
+  background:radial-gradient(ellipse,rgba(0,201,167,0.05) 0%,transparent 70%);
+  pointer-events:none;z-index:0}
+
+/* ── HEADER ─────────────────────────────── */
+header{position:sticky;top:0;z-index:100;
+  background:rgba(7,9,15,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);padding:0 24px;height:60px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:30px;height:30px;background:var(--teal);border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:11px;color:#000;letter-spacing:-0.5px;flex-shrink:0}
+.logo-name{font-size:15px;font-weight:800;letter-spacing:1.5px;color:var(--text)}
+.logo-sub{font-size:10px;color:var(--text3);letter-spacing:1.2px;text-transform:uppercase;margin-top:1px}
+.hdr-right{display:flex;align-items:center;gap:10px}
+#last-updated{font-size:11px;color:var(--text3)}
+.btn{display:flex;align-items:center;gap:7px;padding:7px 15px;border-radius:8px;
+  font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;border:1px solid;letter-spacing:.3px}
+.btn-primary{background:var(--teal-dim);border-color:rgba(0,201,167,.3);color:var(--teal)}
+.btn-primary:hover{background:rgba(0,201,167,.22);border-color:rgba(0,201,167,.5)}
+.btn-ghost{background:transparent;border-color:var(--border2);color:var(--text2);font-size:11px;padding:5px 10px}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text);background:var(--bg3)}
+
+/* ── TABS ───────────────────────────────── */
+#tabs-nav{display:flex;align-items:flex-end;gap:2px;padding:14px 24px 0;
+  border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;position:relative;z-index:1}
+#tabs-nav::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:7px;padding:9px 18px;border-radius:10px 10px 0 0;
+  font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;transition:all .2s;
+  white-space:nowrap;border:1px solid transparent;border-bottom:none;background:transparent;
+  letter-spacing:.3px;user-select:none}
+.tab:hover{color:var(--text);background:rgba(255,255,255,.03)}
+.tab.on{color:var(--text);background:var(--bg2);border-color:var(--border);
+  border-bottom-color:var(--bg2);margin-bottom:-1px;padding-bottom:10px}
+.tab-ic{font-size:13px}
+
+/* ── LAYOUT ─────────────────────────────── */
+#main{max-width:1400px;margin:0 auto;padding:28px 24px;position:relative;z-index:1}
+.tab-content{animation:fadeUp .3s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.sec-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;
+  letter-spacing:1.2px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:24px}
+.grid-charts{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:18px;margin-bottom:24px}
+.grid-charts.two{grid-template-columns:repeat(2,1fr)}
+.full{grid-column:1/-1}
+
+/* ── METRIC CARD ────────────────────────── */
+.mcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s}
+.mcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--card-color,var(--teal));opacity:.5}
+.mcard:hover{border-color:var(--border2)}
+.mcard-label{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.9px;
+  text-transform:uppercase;margin-bottom:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mcard-val-row{display:flex;align-items:baseline;gap:5px;margin-bottom:6px}
+.mcard-val{font-size:26px;font-weight:800;color:var(--text);letter-spacing:-1px;line-height:1}
+.mcard-unit{font-size:12px;color:var(--text2);font-weight:500}
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;
+  padding:2px 8px;border-radius:20px}
+.badge.pos{background:var(--pos-dim);color:var(--pos)}
+.badge.neg{background:var(--neg-dim);color:var(--neg)}
+.badge.neu{background:var(--neu-dim);color:var(--text3)}
+.mcard-prev{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* ── CHART CARD ─────────────────────────── */
+.ccard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);
+  padding:20px 22px;transition:border-color .2s}
+.ccard:hover{border-color:var(--border2)}
+.ccard-hdr{display:flex;align-items:flex-start;justify-content:space-between;
+  margin-bottom:14px;gap:10px}
+.ccard-title{font-size:13px;font-weight:700;color:var(--text);letter-spacing:.2px}
+.ccard-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:10px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)}
+.legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.chart-wrap{width:100%;overflow:hidden}
+.chart-wrap svg{width:100%;height:auto;display:block;overflow:visible}
+
+/* ── DONUT ──────────────────────────────── */
+.donut-wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.donut-legend{flex:1;display:flex;flex-direction:column;gap:9px;min-width:120px}
+.donut-row{display:flex;align-items:center;gap:8px;font-size:12px}
+.donut-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.donut-name{color:var(--text2);flex:1}
+.donut-pct{color:var(--text);font-weight:800;font-size:13px}
+
+/* ── H-BARS ─────────────────────────────── */
+.hbar-item{margin-bottom:13px}
+.hbar-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.hbar-name{font-size:12px;color:var(--text2)}
+.hbar-right{display:flex;align-items:center;gap:8px}
+.hbar-delta{font-size:11px}
+.hbar-val{font-size:13px;font-weight:800;color:var(--text)}
+.hbar-track{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.hbar-fill{height:100%;border-radius:3px;transition:width .9s cubic-bezier(.4,0,.2,1)}
+@keyframes barIn{from{width:0}to{width:var(--w)}}
+
+/* ── TRAINING ───────────────────────────── */
+.grid-ex{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:24px}
+.ex-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px}
+.ex-name{font-size:13px;font-weight:800;color:var(--text);margin-bottom:12px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ex-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;
+  border-bottom:1px solid var(--border)}
+.ex-row:last-child{border-bottom:none}
+.ex-type{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px}
+.ex-val-row{display:flex;align-items:baseline;gap:4px}
+.ex-val{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.5px}
+.ex-unit{font-size:11px;color:var(--text2)}
+
+/* ── EMPTY STATE ────────────────────────── */
+#empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:65vh;text-align:center;gap:14px}
+.empty-icon{font-size:56px;opacity:.25;line-height:1}
+.empty-title{font-size:20px;font-weight:800;color:var(--text)}
+.empty-sub{color:var(--text2);max-width:340px;line-height:1.65;font-size:14px}
+.dropzone{border:2px dashed var(--border2);border-radius:var(--rl);padding:36px 32px;
+  text-align:center;cursor:pointer;transition:all .2s;margin-top:8px;min-width:300px}
+.dropzone:hover,.dropzone.over{border-color:var(--teal);background:var(--teal-dim)}
+.dropzone-ic{font-size:28px;margin-bottom:8px;opacity:.7}
+.dropzone-title{font-size:14px;font-weight:700;color:var(--text)}
+.dropzone-sub{font-size:12px;color:var(--text2);margin-top:4px}
+
+/* ── OVERVIEW STATS ─────────────────────── */
+.overview-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px;display:flex;align-items:center;gap:16px}
+.stat-ring-wrap{flex-shrink:0}
+.stat-body{}
+.stat-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:4px}
+.stat-val{font-size:28px;font-weight:800;color:var(--text);letter-spacing:-1px;line-height:1}
+.stat-sub{font-size:12px;color:var(--text2);margin-top:3px}
+
+/* ── TOOLTIP ────────────────────────────── */
+#tooltip{position:fixed;pointer-events:none;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:9px;padding:10px 14px;font-size:12px;color:var(--text);
+  z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.6);opacity:0;transition:opacity .12s;max-width:210px}
+#tooltip.on{opacity:1}
+.tip-date{color:var(--text2);font-size:10px;font-weight:700;letter-spacing:.7px;
+  text-transform:uppercase;margin-bottom:6px}
+.tip-row{display:flex;align-items:center;gap:7px;margin-top:3px}
+.tip-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.tip-name{color:var(--text2);flex:1}
+.tip-val{color:var(--text);font-weight:800;margin-left:8px}
+
+/* ── MISC ───────────────────────────────── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--text3);border-radius:3px}
+
+/* ── RESPONSIVE ─────────────────────────── */
+@media(max-width:800px){
+  header{padding:0 16px}
+  #tabs-nav{padding:10px 16px 0}
+  #main{padding:20px 16px}
+  .grid-charts,.grid-charts.two{grid-template-columns:1fr}
+  .grid-cards{grid-template-columns:repeat(2,1fr)}
+  .logo-sub{display:none}
+  #last-updated{display:none}
+  .mcard-val{font-size:22px}
+  .ccard{padding:16px 16px}
+}
+@media(max-width:420px){
+  .grid-cards{grid-template-columns:1fr}
+  .tab{padding:8px 13px;font-size:11px}
+  .tab-ic{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">MS</div>
+    <div>
+      <div class="logo-name">MESCAN</div>
+      <div class="logo-sub">Gesundheitsanalyse</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <span id="last-updated"></span>
+    <button class="btn btn-ghost" id="btn-clear" style="display:none" title="Alle Daten löschen">✕ Löschen</button>
+    <button class="btn btn-primary" id="btn-upload">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+        <path d="M6.5 1v8M6.5 1L4 3.5M6.5 1L9 3.5M1 10.5v1C1 12 1.5 12.5 2 12.5h9c.5 0 1-.5 1-1v-1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      CSV laden
+    </button>
+  </div>
+</header>
+
+<input type="file" id="file-input" accept=".csv" style="display:none">
+
+<div id="tabs-nav" style="display:none">
+  <div class="tab on" data-tab="overview"><span class="tab-ic">◈</span> Übersicht</div>
+  <div class="tab" data-tab="herz"><span class="tab-ic">♥</span> Herz</div>
+  <div class="tab" data-tab="koerper"><span class="tab-ic">⬡</span> Körper</div>
+  <div class="tab" data-tab="stoffwechsel"><span class="tab-ic">⚡</span> Stoffwechsel</div>
+  <div class="tab" data-tab="training"><span class="tab-ic">◉</span> Training</div>
+</div>
+
+<div id="main">
+  <div id="empty-state">
+    <div class="empty-icon">📊</div>
+    <div class="empty-title">Noch keine Daten</div>
+    <div class="empty-sub">Lade deine wöchentliche mescan CSV-Datei hoch, um deine Gesundheitsdaten zu visualisieren und Fortschritte zu verfolgen.</div>
+    <div class="dropzone" id="drop-zone">
+      <div class="dropzone-ic">⬆</div>
+      <div class="dropzone-title">CSV-Datei hier ablegen</div>
+      <div class="dropzone-sub">oder klicken zum Auswählen</div>
+    </div>
+  </div>
+  <div id="dashboard" style="display:none"></div>
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+'use strict';
+
+/* ══════════════════════════════════════════
+   CONSTANTS
+══════════════════════════════════════════ */
+const STORAGE_KEY = 'mescan_v1';
+
+const COLORS = ['#00c9a7','#4f9cf9','#ffb340','#ff5252','#c678dd','#20c1e9','#f7c59f'];
+
+// Direction: 'higher' = more is better, 'lower' = less is better, 'neutral' = no judgement
+const DIR = {
+  'Herzfrequenz':              'lower',
+  'HRV-Trainingsbereitschaft': 'higher',
+  'Max. Herzfrequenz':         'neutral',
+  'BMI':                       'neutral',
+  'Fettfreie Masse':           'higher',
+  'Wasser':                    'higher',
+  'Muskelprotein':             'higher',
+  'Passives Gewebe':           'lower',
+  'Fettmasse ges. ':           'lower',
+  'Essentielles Fett':         'neutral',
+  'Fettreserve':               'lower',
+  'Überschüssiges Fett':       'lower',
+  'Gewicht':                   'neutral',
+  'Muskelmasse':               'higher',
+  'Torso':                     'higher',
+  'Arm Rechts':                'higher',
+  'Arm Links':                 'higher',
+  'Bein Rechts':               'higher',
+  'Bein Links':                'higher',
+  'Viszerales Fett':           'lower',
+  'Wasser (Gesamt)':           'higher',
+  'Bio Age':                   'lower',
+  'Zellfitnesswert':           'higher',
+  'Sauerstoffsättigung':       'neutral',
+  'Wasserhaushalt':            'neutral',
+  'Intrazelluläres Wasser':    'higher',
+  'Extrazelluläres Wasser':    'higher',
+};
+
+/* ══════════════════════════════════════════
+   CSV PARSING
+══════════════════════════════════════════ */
+function parseCSVLine(line) {
+  const cells = [];
+  let cell = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { inQ = !inQ; }
+    else if (c === ',' && !inQ) { cells.push(cell); cell = ''; }
+    else { cell += c; }
+  }
+  cells.push(cell);
+  return cells;
+}
+
+function parseCSV(text) {
+  return text.split('\n')
+    .map(l => l.trim())
+    .filter(l => l.length > 0)
+    .map(parseCSVLine);
+}
+
+function processData(rows) {
+  if (rows.length < 3) return null;
+  // Row index 1 is the header: ['','Kategorie','Metrik','Einheit', date1, date2, ...]
+  const header = rows[1];
+  const rawDates = header.slice(4);
+  const dates = rawDates.filter(d => d && !d.includes('?')).map(d => d.trim());
+
+  const metrics = [];
+  for (let i = 2; i < rows.length; i++) {
+    const row = rows[i];
+    if (!row[1] || !row[1].trim()) continue;
+    const m = {
+      category: row[1].trim(),
+      name:     row[2] ? row[2].trim() : '',
+      unit:     row[3] ? row[3].trim() : '',
+      values:   {}
+    };
+    dates.forEach((d, di) => {
+      const raw = (row[4 + di] || '').trim();
+      if (raw) {
+        const n = parseFloat(raw.replace(',', '.'));
+        if (!isNaN(n)) m.values[d] = n;
+      }
+    });
+    metrics.push(m);
+  }
+  return { dates, metrics, importedAt: new Date().toISOString() };
+}
+
+/* ══════════════════════════════════════════
+   STORAGE
+══════════════════════════════════════════ */
+function saveData(data) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+function loadData() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    return s ? JSON.parse(s) : null;
+  } catch(e) { return null; }
+}
+function clearData() {
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+/* ══════════════════════════════════════════
+   DATA HELPERS
+══════════════════════════════════════════ */
+function getM(metrics, category, name, unit) {
+  return metrics.find(m =>
+    m.category === category &&
+    m.name === name &&
+    (unit == null || m.unit === unit)
+  );
+}
+function getCat(metrics, category) {
+  return metrics.filter(m => m.category === category);
+}
+function latest(m, dates) {
+  if (!m) return null;
+  for (let i = dates.length - 1; i >= 0; i--) {
+    if (m.values[dates[i]] != null) return { v: m.values[dates[i]], d: dates[i] };
+  }
+  return null;
+}
+function prevVal(m, dates) {
+  // Second-to-last non-null
+  const filled = dates.filter(d => m.values[d] != null);
+  if (filled.length < 2) return null;
+  return m.values[filled[filled.length - 2]];
+}
+function delta(m, dates) {
+  const l = latest(m, dates);
+  const p = prevVal(m, dates);
+  if (l == null || p == null) return null;
+  return l.v - p;
+}
+function deltaClass(name, d) {
+  if (d == null || d === 0) return 'neu';
+  const dir = DIR[name] || 'neutral';
+  if (dir === 'neutral') return 'neu';
+  if (dir === 'higher') return d > 0 ? 'pos' : 'neg';
+  if (dir === 'lower')  return d < 0 ? 'pos' : 'neg';
+  return 'neu';
+}
+function fmt(n, dec) {
+  if (n == null || isNaN(n)) return '–';
+  if (dec != null) return n.toFixed(dec);
+  return n % 1 === 0 ? String(n) : n.toFixed(1);
+}
+function fmtDelta(d) {
+  if (d == null) return null;
+  return (d > 0 ? '+' : '') + fmt(d, 2);
+}
+
+/* ══════════════════════════════════════════
+   TOOLTIP
+══════════════════════════════════════════ */
+const _tips = {};
+let _tipN = 0;
+function regTip(obj) {
+  const id = 'T' + _tipN++;
+  _tips[id] = obj;
+  return id;
+}
+const tipEl = document.getElementById('tooltip');
+function showTip(e, id) {
+  const d = _tips[id];
+  if (!d) return;
+  let html = `<div class="tip-date">${d.date}</div>`;
+  d.rows.forEach(r => {
+    html += `<div class="tip-row">
+      <span class="tip-dot" style="background:${r.color}"></span>
+      <span class="tip-name">${r.name}</span>
+      <span class="tip-val">${r.value}</span>
+    </div>`;
+  });
+  tipEl.innerHTML = html;
+  tipEl.classList.add('on');
+  posTip(e.clientX, e.clientY);
+}
+function posTip(cx, cy) {
+  const w = tipEl.offsetWidth || 180, h = tipEl.offsetHeight || 60;
+  let lx = cx + 14, ly = cy - 10;
+  if (lx + w > window.innerWidth - 10) lx = cx - w - 14;
+  if (ly + h > window.innerHeight - 10) ly = window.innerHeight - h - 10;
+  if (ly < 10) ly = 10;
+  tipEl.style.left = lx + 'px';
+  tipEl.style.top  = ly + 'px';
+}
+function hideTip() { tipEl.classList.remove('on'); }
+
+document.addEventListener('mouseover', e => {
+  const t = e.target;
+  if (t && t.dataset && t.dataset.tid) showTip(e, t.dataset.tid);
+});
+document.addEventListener('mousemove', e => {
+  if (tipEl.classList.contains('on')) posTip(e.clientX, e.clientY);
+});
+document.addEventListener('mouseout', e => {
+  const t = e.target;
+  if (t && t.dataset && t.dataset.tid) hideTip();
+});
+
+/* ══════════════════════════════════════════
+   SVG LINE CHART
+══════════════════════════════════════════ */
+function lineChart(datasets, xLabels, { h = 200, yUnit = '' } = {}) {
+  const W = 540, H = h;
+  const PL = 46, PR = 14, PT = 16, PB = 38;
+  const pw = W - PL - PR, ph = H - PT - PB;
+
+  const allV = datasets.flatMap(ds => ds.values.filter(v => v != null && !isNaN(v)));
+  if (allV.length === 0) return '<p style="color:var(--text3);font-size:12px;padding:20px 0">Nicht genügend Daten</p>';
+
+  let mn = Math.min(...allV), mx = Math.max(...allV);
+  const rng = mx - mn || 1;
+  mn -= rng * 0.18; mx += rng * 0.18;
+
+  const n = xLabels.length;
+  const xs = i => PL + (n > 1 ? (i / (n - 1)) * pw : pw / 2);
+  const ys = v => PT + ph * (1 - (v - mn) / (mx - mn));
+
+  const COLS = COLORS;
+  let out = '<defs>';
+  datasets.forEach((ds, di) => {
+    const c = ds.color || COLS[di % COLS.length];
+    out += `<linearGradient id="g${di}" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="${c}" stop-opacity=".28"/>
+      <stop offset="100%" stop-color="${c}" stop-opacity="0"/>
+    </linearGradient>`;
+  });
+  out += '</defs>';
+
+  // Grid
+  for (let i = 0; i <= 4; i++) {
+    const gy = PT + (ph / 4) * i;
+    const gv = mx - (mx - mn) * (i / 4);
+    out += `<line x1="${PL}" y1="${gy}" x2="${W-PR}" y2="${gy}" stroke="#151e30" stroke-width="1"/>`;
+    out += `<text x="${PL-5}" y="${gy+3.5}" text-anchor="end" fill="#3d5060" font-size="9.5" font-family="Helvetica Neue,sans-serif">${fmt(gv,1)}</text>`;
+  }
+
+  // X labels
+  xLabels.forEach((lbl, i) => {
+    const short = lbl.split('.').slice(0,2).join('.');
+    out += `<text x="${xs(i)}" y="${H-5}" text-anchor="middle" fill="#3d5060" font-size="9.5" font-family="Helvetica Neue,sans-serif">${short}</text>`;
+  });
+
+  // Datasets
+  datasets.forEach((ds, di) => {
+    const c = ds.color || COLS[di % COLS.length];
+
+    // Build segments (split on nulls)
+    const segs = [];
+    let cur = [];
+    ds.values.forEach((v, i) => {
+      if (v != null && !isNaN(v)) { cur.push({i, v}); }
+      else if (cur.length) { segs.push(cur); cur = []; }
+    });
+    if (cur.length) segs.push(cur);
+
+    segs.forEach(seg => {
+      if (!seg.length) return;
+      if (seg.length === 1) {
+        const p = seg[0];
+        out += `<circle cx="${xs(p.i)}" cy="${ys(p.v)}" r="4" fill="${c}" stroke="#0c1020" stroke-width="2"/>`;
+        return;
+      }
+      // Build smooth bezier path
+      let d = `M ${xs(seg[0].i).toFixed(1)} ${ys(seg[0].v).toFixed(1)}`;
+      for (let k = 1; k < seg.length; k++) {
+        const prev = seg[k-1], curr = seg[k];
+        const mx2 = ((xs(prev.i) + xs(curr.i)) / 2).toFixed(1);
+        d += ` C ${mx2},${ys(prev.v).toFixed(1)} ${mx2},${ys(curr.v).toFixed(1)} ${xs(curr.i).toFixed(1)},${ys(curr.v).toFixed(1)}`;
+      }
+      // Fill
+      const fd = d + ` L ${xs(seg[seg.length-1].i).toFixed(1)},${(PT+ph).toFixed(1)} L ${xs(seg[0].i).toFixed(1)},${(PT+ph).toFixed(1)} Z`;
+      out += `<path d="${fd}" fill="url(#g${di})" stroke="none"/>`;
+      // Line
+      out += `<path d="${d}" fill="none" stroke="${c}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+    });
+
+    // Dots + hover
+    ds.values.forEach((v, i) => {
+      if (v == null || isNaN(v)) return;
+      const tid = regTip({ date: xLabels[i], rows: [{ name: ds.label, value: fmt(v) + (yUnit ? ' ' + yUnit : ''), color: c }] });
+      out += `<circle cx="${xs(i).toFixed(1)}" cy="${ys(v).toFixed(1)}" r="3.5" fill="${c}" stroke="#0c1020" stroke-width="2"/>`;
+      out += `<circle cx="${xs(i).toFixed(1)}" cy="${ys(v).toFixed(1)}" r="13" fill="transparent" data-tid="${tid}" style="cursor:crosshair"/>`;
+    });
+  });
+
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">${out}</svg>`;
+}
+
+/* ══════════════════════════════════════════
+   SVG DONUT CHART
+══════════════════════════════════════════ */
+function donutChart(segments, { size = 160, thick = 30 } = {}) {
+  const cx = size / 2, cy = size / 2, r = (size - thick) / 2;
+  const total = segments.reduce((s, sg) => s + sg.v, 0);
+  if (total === 0) return '';
+
+  let angle = -Math.PI / 2;
+  const GAP = 0.04; // radians gap
+  let arcs = '';
+
+  segments.forEach(sg => {
+    const frac = sg.v / total;
+    const span = frac * 2 * Math.PI - GAP;
+    if (span <= 0) { angle += frac * 2 * Math.PI; return; }
+    const sa = angle + GAP / 2;
+    const ea = sa + span;
+    const x1 = cx + r * Math.cos(sa), y1 = cy + r * Math.sin(sa);
+    const x2 = cx + r * Math.cos(ea), y2 = cy + r * Math.sin(ea);
+    const big = span > Math.PI ? 1 : 0;
+    arcs += `<path d="M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${r} ${r} 0 ${big} 1 ${x2.toFixed(2)} ${y2.toFixed(2)}"
+      fill="none" stroke="${sg.color}" stroke-width="${thick}" stroke-linecap="round"/>`;
+    angle += frac * 2 * Math.PI;
+  });
+
+  // Center text (first segment = lean mass)
+  const centerVal = segments[0] ? segments[0].v.toFixed(1) + '%' : '';
+  const centerLbl = segments[0] ? segments[0].name.split(' ')[0] : '';
+
+  const svg = `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" style="flex-shrink:0">
+    ${arcs}
+    <text x="${cx}" y="${cy - 5}" text-anchor="middle" fill="#e8edf5" font-size="16" font-weight="800" font-family="Helvetica Neue,sans-serif">${centerVal}</text>
+    <text x="${cx}" y="${cy + 10}" text-anchor="middle" fill="#7a8fa8" font-size="8.5" font-family="Helvetica Neue,sans-serif" letter-spacing="0.5">${centerLbl}</text>
+  </svg>`;
+
+  const legend = segments.map(sg => `
+    <div class="donut-row">
+      <span class="donut-dot" style="background:${sg.color}"></span>
+      <span class="donut-name">${sg.name}</span>
+      <span class="donut-pct">${sg.v.toFixed(1)}%</span>
+    </div>`).join('');
+
+  return `<div class="donut-wrap">${svg}<div class="donut-legend">${legend}</div></div>`;
+}
+
+/* ══════════════════════════════════════════
+   HORIZONTAL BAR CHART
+══════════════════════════════════════════ */
+function hBars(items, maxV, { color = 'var(--teal)', unit = '' } = {}) {
+  return items.map((it, idx) => {
+    const pct = maxV > 0 ? Math.min(100, (it.v / maxV) * 100) : 0;
+    const d = it.delta;
+    let dHtml = '';
+    if (d != null && d !== 0) {
+      const cls = d > 0 ? 'var(--pos)' : 'var(--neg)';
+      dHtml = `<span class="hbar-delta" style="color:${cls}">${d > 0 ? '+' : ''}${fmt(d, 2)} ${unit}</span>`;
+    }
+    const barStyle = `height:100%;width:${pct.toFixed(1)}%;background:${color};border-radius:3px;animation:none;transition:width .9s ${idx*0.08}s cubic-bezier(.4,0,.2,1)`;
+    return `<div class="hbar-item">
+      <div class="hbar-hdr">
+        <span class="hbar-name">${it.label}</span>
+        <div class="hbar-right">${dHtml}<span class="hbar-val">${fmt(it.v, 2)} ${unit}</span></div>
+      </div>
+      <div class="hbar-track"><div style="${barStyle}" data-pct="${pct.toFixed(1)}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════════
+   COMPONENTS
+══════════════════════════════════════════ */
+function metricCard(label, m, dates, { color = 'var(--teal)' } = {}) {
+  if (!m) return '';
+  const l = latest(m, dates);
+  if (!l) return '';
+  const d = delta(m, dates);
+  const dc = deltaClass(m.name, d);
+  const dStr = fmtDelta(d);
+  const p = prevVal(m, dates);
+  const badgeHtml = dStr ? `<span class="badge ${dc}">${dc === 'pos' ? '▲' : dc === 'neg' ? '▼' : ''}${dStr} ${m.unit}</span>` : '';
+  const prevHtml = p != null ? `<div class="mcard-prev">Zuvor: ${fmt(p)} ${m.unit}</div>` : '';
+  return `<div class="mcard" style="--card-color:${color}">
+    <div class="mcard-label">${label}</div>
+    <div class="mcard-val-row">
+      <span class="mcard-val">${fmt(l.v)}</span>
+      <span class="mcard-unit">${m.unit}</span>
+    </div>
+    ${badgeHtml}
+    ${prevHtml}
+  </div>`;
+}
+
+function chartCard(title, sub, legendItems, chartHtml, extraClass = '') {
+  const legend = legendItems.map(li =>
+    `<div class="legend-item"><span class="legend-dot" style="background:${li.c}"></span>${li.n}</div>`
+  ).join('');
+  const legHtml = legendItems.length ? `<div class="legend">${legend}</div>` : '';
+  return `<div class="ccard ${extraClass}">
+    <div class="ccard-hdr">
+      <div>
+        <div class="ccard-title">${title}</div>
+        ${sub ? `<div class="ccard-sub">${sub}</div>` : ''}
+      </div>
+    </div>
+    ${legHtml}
+    <div class="chart-wrap">${chartHtml}</div>
+  </div>`;
+}
+
+/* ══════════════════════════════════════════
+   TAB: OVERVIEW
+══════════════════════════════════════════ */
+function renderOverview(metrics, dates) {
+  // Count progress / regression / stable
+  let improved = 0, regressed = 0, stable = 0;
+  const allM = metrics.filter(m => !['Training'].includes(m.category));
+  allM.forEach(m => {
+    const d = delta(m, dates);
+    if (d == null || d === 0) { stable++; return; }
+    const cls = deltaClass(m.name, d);
+    if (cls === 'pos') improved++;
+    else if (cls === 'neg') regressed++;
+    else stable++;
+  });
+  const total = improved + regressed + stable;
+
+  // Key metrics from each category
+  const herzFq   = getM(metrics, 'Herz', 'Herzfrequenz');
+  const herzHrv  = getM(metrics, 'Herz', 'HRV-Trainingsbereitschaft');
+  const koerperW = getM(metrics, 'Körperanalyse', 'Gewicht', 'kg');
+  const muskel   = getM(metrics, 'Körperanalyse', 'Muskelmasse', 'kg');
+  const fettPct  = getM(metrics, 'Körperanalyse', 'Fettmasse ges. ', '%');
+  const bioAge   = getM(metrics, 'Stoffwechsel', 'Bio Age');
+  const zellfit  = getM(metrics, 'Stoffwechsel', 'Zellfitnesswert');
+  const o2       = getM(metrics, 'Stoffwechsel', 'Sauerstoffsättigung');
+
+  // Summary stat ring (just an inline SVG arc)
+  const impPct = total ? (improved / total) * 100 : 0;
+  const regPct = total ? (regressed / total) * 100 : 0;
+
+  const r2 = 40, cx2 = 50, cy2 = 50, tck = 10;
+  const arc = (pct, startPct, col) => {
+    if (pct <= 0) return '';
+    const full = 2 * Math.PI;
+    const start = (startPct / 100) * full - Math.PI / 2;
+    const end   = start + (pct / 100) * full - 0.05;
+    const x1 = cx2 + r2 * Math.cos(start), y1 = cy2 + r2 * Math.sin(start);
+    const x2 = cx2 + r2 * Math.cos(end),   y2 = cy2 + r2 * Math.sin(end);
+    const big = (pct / 100 * full) > Math.PI ? 1 : 0;
+    return `<path d="M ${x1.toFixed(1)} ${y1.toFixed(1)} A ${r2} ${r2} 0 ${big} 1 ${x2.toFixed(1)} ${y2.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${tck}" stroke-linecap="round"/>`;
+  };
+
+  const ringSvg = `<svg viewBox="0 0 100 100" width="90" height="90" style="flex-shrink:0">
+    <circle cx="50" cy="50" r="${r2}" fill="none" stroke="#151e30" stroke-width="${tck}"/>
+    ${arc(impPct, 0, 'var(--pos)')}
+    ${arc(regPct, impPct, 'var(--neg)')}
+    <text x="50" y="46" text-anchor="middle" fill="#e8edf5" font-size="16" font-weight="800" font-family="Helvetica Neue,sans-serif">${improved}</text>
+    <text x="50" y="58" text-anchor="middle" fill="#7a8fa8" font-size="9" font-family="Helvetica Neue,sans-serif">verbessert</text>
+  </svg>`;
+
+  // Trend chart for body weight + muscle over all dates
+  let trendChart = '';
+  if (dates.length >= 2 && koerperW && muskel) {
+    const ds = [
+      { label: 'Gewicht', values: dates.map(d => koerperW.values[d] ?? null), color: COLORS[0] },
+      { label: 'Muskelmasse', values: dates.map(d => muskel.values[d] ?? null), color: COLORS[1] }
+    ];
+    trendChart = chartCard('Körper-Trend', 'Gewicht & Muskelmasse',
+      [{ n: 'Gewicht', c: COLORS[0] }, { n: 'Muskelmasse', c: COLORS[1] }],
+      lineChart(ds, dates, { yUnit: 'kg' }), 'full');
+  }
+
+  return `<div class="tab-content">
+    <div class="sec-label">Gesundheitsübersicht</div>
+    <div class="grid-cards" style="margin-bottom:24px">
+      <div class="overview-stat" style="grid-column:span 2">
+        ${ringSvg}
+        <div>
+          <div class="stat-label">Fortschrittsbilanz</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+            <span style="font-size:26px;font-weight:800;color:var(--pos)">${improved}</span>
+            <span style="font-size:13px;color:var(--text2)">verbessert</span>
+            <span style="font-size:26px;font-weight:800;color:var(--neg);margin-left:10px">${regressed}</span>
+            <span style="font-size:13px;color:var(--text2)">rückläufig</span>
+            <span style="font-size:26px;font-weight:800;color:var(--text3);margin-left:10px">${stable}</span>
+            <span style="font-size:13px;color:var(--text2)">stabil</span>
+          </div>
+          <div class="stat-sub">${total} Metriken · ${dates.length} Messpunkte</div>
+        </div>
+      </div>
+      ${metricCard('Herzfrequenz', herzFq, dates, { color: '#ff5252' })}
+      ${metricCard('HRV', herzHrv, dates, { color: '#4f9cf9' })}
+      ${metricCard('Gewicht', koerperW, dates, { color: '#00c9a7' })}
+      ${metricCard('Muskelmasse', muskel, dates, { color: '#ffb340' })}
+      ${metricCard('Körperfett', fettPct, dates, { color: '#c678dd' })}
+      ${metricCard('Bio Age', bioAge, dates, { color: '#4f9cf9' })}
+      ${metricCard('Zellfitnesswert', zellfit, dates, { color: '#00c9a7' })}
+      ${metricCard('O₂-Sättigung', o2, dates, { color: '#2fd180' })}
+    </div>
+    <div class="sec-label">Verlauf</div>
+    <div class="grid-charts">${trendChart || '<p style="color:var(--text3);font-size:13px">Mehr Messpunkte benötigt für Verlaufsdiagramme.</p>'}</div>
+  </div>`;
+}
+
+/* ══════════════════════════════════════════
+   TAB: HERZ
+══════════════════════════════════════════ */
+function renderHerz(metrics, dates) {
+  const hfq = getM(metrics, 'Herz', 'Herzfrequenz');
+  const hrv = getM(metrics, 'Herz', 'HRV-Trainingsbereitschaft');
+  const mhf = getM(metrics, 'Herz', 'Max. Herzfrequenz');
+
+  let chartHtml = '<p style="color:var(--text3);font-size:12px">Nicht genügend Daten</p>';
+  if (dates.length >= 1) {
+    const ds = [];
+    if (hfq) ds.push({ label: 'Herzfrequenz', values: dates.map(d => hfq.values[d] ?? null), color: '#ff5252' });
+    if (hrv) ds.push({ label: 'HRV', values: dates.map(d => hrv.values[d] ?? null), color: '#4f9cf9' });
+    if (ds.length) chartHtml = lineChart(ds, dates, { yUnit: 'bpm / ms', h: 220 });
+  }
+
+  const legItems = [];
+  if (hfq) legItems.push({ n: 'Herzfrequenz (bpm)', c: '#ff5252' });
+  if (hrv) legItems.push({ n: 'HRV (ms)', c: '#4f9cf9' });
+
+  return `<div class="tab-content">
+    <div class="sec-label">Kennzahlen</div>
+    <div class="grid-cards">
+      ${metricCard('Herzfrequenz', hfq, dates, { color: '#ff5252' })}
+      ${metricCard('HRV · Trainingsbereitschaft', hrv, dates, { color: '#4f9cf9' })}
+      ${metricCard('Max. Herzfrequenz', mhf, dates, { color: '#ffb340' })}
+    </div>
+    <div class="sec-label">Verlauf</div>
+    <div class="grid-charts">
+      ${chartCard('Herzfrequenz & HRV', 'Ruheherzfrequenz vs. Herzratenvariabilität', legItems, chartHtml, 'full')}
+    </div>
+  </div>`;
+}
+
+/* ══════════════════════════════════════════
+   TAB: KÖRPER
+══════════════════════════════════════════ */
+function renderKoerper(metrics, dates) {
+  const kgW    = getM(metrics, 'Körperanalyse', 'Gewicht', 'kg');
+  const muskel = getM(metrics, 'Körperanalyse', 'Muskelmasse', 'kg');
+  const fettKg = getM(metrics, 'Körperanalyse', 'Fettmasse ges. ', 'kg');
+  const fettPc = getM(metrics, 'Körperanalyse', 'Fettmasse ges. ', '%');
+  const leanPc = getM(metrics, 'Körperanalyse', 'Fettfreie Masse', '%');
+  const bmi    = getM(metrics, 'Körperanalyse', 'BMI');
+  const viz    = getM(metrics, 'Körperanalyse', 'Viszerales Fett', 'kg');
+  const wasser = getM(metrics, 'Körperanalyse', 'Wasser (Gesamt)', 'kg');
+
+  // Body segments
+  const segs = [
+    { key: 'Torso',       label: 'Torso' },
+    { key: 'Arm Rechts',  label: 'Arm Rechts' },
+    { key: 'Arm Links',   label: 'Arm Links' },
+    { key: 'Bein Rechts', label: 'Bein Rechts' },
+    { key: 'Bein Links',  label: 'Bein Links' },
+  ];
+
+  const latestDate = dates.length ? dates[dates.length - 1] : null;
+  const prevDate   = dates.length > 1 ? dates[dates.length - 2] : null;
+
+  const segItems = segs.map(s => {
+    const m = getM(metrics, 'Körperanalyse', s.key, 'kg');
+    if (!m) return null;
+    const v = latestDate ? (m.values[latestDate] ?? null) : null;
+    if (v == null) return null;
+    const p = prevDate ? (m.values[prevDate] ?? null) : null;
+    return { label: s.label, v, delta: p != null ? v - p : null };
+  }).filter(Boolean);
+
+  const maxSeg = Math.max(...segItems.map(s => s.v), 0) * 1.2;
+
+  // Weight + muscle chart
+  let wChartHtml = '';
+  if (dates.length >= 1 && (kgW || muskel)) {
+    const ds = [];
+    if (kgW)    ds.push({ label: 'Gewicht', values: dates.map(d => kgW.values[d] ?? null), color: COLORS[0] });
+    if (muskel) ds.push({ label: 'Muskelmasse', values: dates.map(d => muskel.values[d] ?? null), color: COLORS[1] });
+    if (fettKg) ds.push({ label: 'Fettmasse', values: dates.map(d => fettKg.values[d] ?? null), color: '#ff5252' });
+    wChartHtml = lineChart(ds, dates, { yUnit: 'kg', h: 210 });
+  }
+
+  // Lean / fat % chart
+  let compChartHtml = '';
+  if (dates.length >= 1 && (leanPc || fettPc)) {
+    const ds = [];
+    if (leanPc) ds.push({ label: 'Fettfreie Masse', values: dates.map(d => leanPc.values[d] ?? null), color: COLORS[0] });
+    if (fettPc) ds.push({ label: 'Fettmasse', values: dates.map(d => fettPc.values[d] ?? null), color: '#ff5252' });
+    compChartHtml = lineChart(ds, dates, { yUnit: '%', h: 210 });
+  }
+
+  // Donut: body composition (latest)
+  let donutHtml = '';
+  if (latestDate && leanPc && fettPc) {
+    const lv = leanPc.values[latestDate] ?? 0;
+    const fv = fettPc.values[latestDate] ?? 0;
+    const segsDonut = [
+      { name: 'Fettfreie Masse', v: lv, color: COLORS[0] },
+      { name: 'Fettmasse ges.', v: fv, color: '#ff5252' },
+    ];
+    donutHtml = donutChart(segsDonut, { size: 160, thick: 28 });
+  }
+
+  const wChartLeg = [];
+  if (kgW)    wChartLeg.push({ n: 'Gewicht', c: COLORS[0] });
+  if (muskel) wChartLeg.push({ n: 'Muskelmasse', c: COLORS[1] });
+  if (fettKg) wChartLeg.push({ n: 'Fettmasse', c: '#ff5252' });
+
+  const compLeg = [];
+  if (leanPc) compLeg.push({ n: 'Fettfreie Masse', c: COLORS[0] });
+  if (fettPc) compLeg.push({ n: 'Fettmasse', c: '#ff5252' });
+
+  return `<div class="tab-content">
+    <div class="sec-label">Körperkennzahlen</div>
+    <div class="grid-cards">
+      ${metricCard('Gewicht', kgW, dates, { color: '#00c9a7' })}
+      ${metricCard('Muskelmasse', muskel, dates, { color: '#ffb340' })}
+      ${metricCard('Fettmasse', fettKg, dates, { color: '#ff5252' })}
+      ${metricCard('BMI', bmi, dates, { color: '#4f9cf9' })}
+      ${metricCard('Viszerales Fett', viz, dates, { color: '#ff5252' })}
+      ${metricCard('Gesamtwasser', wasser, dates, { color: '#20c1e9' })}
+    </div>
+    <div class="sec-label">Verlauf & Zusammensetzung</div>
+    <div class="grid-charts grid-charts">
+      ${wChartHtml ? chartCard('Gewicht & Masse', 'in Kilogramm', wChartLeg, wChartHtml) : ''}
+      ${compChartHtml ? chartCard('Körperzusammensetzung', 'Anteil in Prozent', compLeg, compChartHtml) : ''}
+      ${donutHtml ? chartCard('Aktuelle Verteilung', dates.length ? dates[dates.length - 1] : '', [], donutHtml) : ''}
+      ${segItems.length ? chartCard('Muskelmasse nach Segment', 'in Kilogramm',
+        [], `<div style="padding:4px 0">${hBars(segItems, maxSeg, { color: 'var(--teal)', unit: 'kg' })}</div>`) : ''}
+    </div>
+  </div>`;
+}
+
+/* ══════════════════════════════════════════
+   TAB: STOFFWECHSEL
+══════════════════════════════════════════ */
+function renderStoffwechsel(metrics, dates) {
+  const bioAge = getM(metrics, 'Stoffwechsel', 'Bio Age');
+  const zell   = getM(metrics, 'Stoffwechsel', 'Zellfitnesswert');
+  const o2     = getM(metrics, 'Stoffwechsel', 'Sauerstoffsättigung');
+  const wHaus  = getM(metrics, 'Stoffwechsel', 'Wasserhaushalt');
+  const iwZ    = getM(metrics, 'Stoffwechsel', 'Intrazelluläres Wasser');
+  const ewZ    = getM(metrics, 'Stoffwechsel', 'Extrazelluläres Wasser');
+
+  let waterChart = '';
+  if (dates.length >= 1 && (iwZ || ewZ)) {
+    const ds = [];
+    if (iwZ) ds.push({ label: 'Intrazellulär', values: dates.map(d => iwZ.values[d] ?? null), color: COLORS[0] });
+    if (ewZ) ds.push({ label: 'Extrazellulär', values: dates.map(d => ewZ.values[d] ?? null), color: COLORS[1] });
+    waterChart = lineChart(ds, dates, { yUnit: 'kg', h: 210 });
+  }
+
+  const watLeg = [];
+  if (iwZ) watLeg.push({ n: 'Intrazelluläres Wasser (kg)', c: COLORS[0] });
+  if (ewZ) watLeg.push({ n: 'Extrazelluläres Wasser (kg)', c: COLORS[1] });
+
+  // Zellfitwert + Wasserhaushalt chart
+  let zellChart = '';
+  if (dates.length >= 1 && (zell || wHaus)) {
+    const ds = [];
+    if (zell)  ds.push({ label: 'Zellfitnesswert (°)', values: dates.map(d => zell.values[d] ?? null), color: COLORS[2] });
+    if (wHaus) ds.push({ label: 'Wasserhaushalt (%)', values: dates.map(d => wHaus.values[d] ?? null), color: COLORS[3] });
+    zellChart = lineChart(ds, dates, { h: 210 });
+  }
+  const zellLeg = [];
+  if (zell)  zellLeg.push({ n: 'Zellfitnesswert', c: COLORS[2] });
+  if (wHaus) zellLeg.push({ n: 'Wasserhaushalt', c: COLORS[3] });
+
+  return `<div class="tab-content">
+    <div class="sec-label">Stoffwechselkennzahlen</div>
+    <div class="grid-cards">
+      ${metricCard('Biologisches Alter', bioAge, dates, { color: '#4f9cf9' })}
+      ${metricCard('Zellfitnesswert', zell, dates, { color: '#ffb340' })}
+      ${metricCard('O₂-Sättigung', o2, dates, { color: '#2fd180' })}
+      ${metricCard('Wasserhaushalt', wHaus, dates, { color: '#20c1e9' })}
+    </div>
+    <div class="sec-label">Verlauf</div>
+    <div class="grid-charts">
+      ${waterChart ? chartCard('Wasserverteilung', 'Intra- & Extrazelluläres Wasser', watLeg, waterChart) : ''}
+      ${zellChart ? chartCard('Zellfitness & Wasserhaushalt', 'Phasenwinkel & Prozent', zellLeg, zellChart) : ''}
+    </div>
+  </div>`;
+}
+
+/* ══════════════════════════════════════════
+   TAB: TRAINING
+══════════════════════════════════════════ */
+function renderTraining(metrics, dates) {
+  const trainM = getCat(metrics, 'Training');
+  if (!trainM.length) {
+    return `<div class="tab-content">
+      <div class="sec-label">Training</div>
+      <p style="color:var(--text3);font-size:13px;padding:20px 0">Keine Trainingsdaten vorhanden.</p>
+    </div>`;
+  }
+
+  // Group by exercise name
+  const exerciseMap = {};
+  trainM.forEach(m => {
+    if (!exerciseMap[m.name]) exerciseMap[m.name] = {};
+    exerciseMap[m.name][m.unit] = m;
+  });
+
+  const latestDate = dates.length ? dates[dates.length - 1] : null;
+  const prevDate   = dates.length > 1 ? dates[dates.length - 2] : null;
+
+  const unitLabels = { reps: 'Wdh.', kg: 'kg', lbs: 'lbs' };
+
+  const cards = Object.entries(exerciseMap).map(([name, units]) => {
+    const rows = Object.entries(units).map(([unit, m]) => {
+      const lv = latestDate ? (m.values[latestDate] ?? null) : null;
+      const pv = prevDate   ? (m.values[prevDate]   ?? null) : null;
+      if (lv == null) return '';
+      const d2 = pv != null ? lv - pv : null;
+      const dHtml = d2 != null && d2 !== 0
+        ? `<span style="font-size:11px;color:${d2 > 0 ? 'var(--pos)' : 'var(--neg)'};">${d2 > 0 ? '+' : ''}${fmt(d2)}</span>`
+        : '';
+      return `<div class="ex-row">
+        <span class="ex-type">${unitLabels[unit] || unit}</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${dHtml}
+          <div class="ex-val-row">
+            <span class="ex-val">${fmt(lv, 1)}</span>
+            <span class="ex-unit">${unitLabels[unit] || unit}</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div class="ex-card">
+      <div class="ex-name">${name}</div>
+      ${rows}
+    </div>`;
+  }).join('');
+
+  // Progress charts for exercises with multiple date points
+  const progressCharts = [];
+  Object.entries(exerciseMap).forEach(([name, units]) => {
+    const kgM = units['kg'] || units['lbs'] || units['reps'];
+    if (!kgM) return;
+    const vals = dates.map(d => kgM.values[d] ?? null);
+    const hasMultiple = vals.filter(v => v != null).length >= 2;
+    if (!hasMultiple) return;
+    const unit = Object.keys(units)[0];
+    const ds = [{ label: name, values: vals, color: COLORS[progressCharts.length % COLORS.length] }];
+    progressCharts.push(chartCard(name, unit, [{ n: name, c: COLORS[progressCharts.length % COLORS.length] }],
+      lineChart(ds, dates, { yUnit: unit, h: 180 })));
+  });
+
+  return `<div class="tab-content">
+    <div class="sec-label">Aktuelle Leistung</div>
+    <div class="grid-ex">${cards}</div>
+    ${progressCharts.length ? `
+      <div class="sec-label">Fortschritt</div>
+      <div class="grid-charts">${progressCharts.join('')}</div>` : ''}
+  </div>`;
+}
+
+/* ══════════════════════════════════════════
+   DASHBOARD RENDER
+══════════════════════════════════════════ */
+let _appData = null;
+let _activeTab = 'overview';
+
+function renderDashboard(data) {
+  _appData = data;
+  const db = document.getElementById('dashboard');
+  const empty = document.getElementById('empty-state');
+  const nav = document.getElementById('tabs-nav');
+  const btnClear = document.getElementById('btn-clear');
+  const lastUpd = document.getElementById('last-updated');
+
+  empty.style.display = 'none';
+  db.style.display = 'block';
+  nav.style.display = 'flex';
+  btnClear.style.display = 'flex';
+
+  if (data.importedAt) {
+    const d = new Date(data.importedAt);
+    lastUpd.textContent = 'Stand: ' + d.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric' });
+  }
+
+  renderTab(_activeTab);
+}
+
+function renderTab(tab) {
+  _activeTab = tab;
+  const db = document.getElementById('dashboard');
+  const { metrics, dates } = _appData;
+
+  // Animate out
+  db.style.opacity = '0';
+  requestAnimationFrame(() => {
+    let html = '';
+    if (tab === 'overview')    html = renderOverview(metrics, dates);
+    else if (tab === 'herz')   html = renderHerz(metrics, dates);
+    else if (tab === 'koerper') html = renderKoerper(metrics, dates);
+    else if (tab === 'stoffwechsel') html = renderStoffwechsel(metrics, dates);
+    else if (tab === 'training') html = renderTraining(metrics, dates);
+    db.innerHTML = html;
+    db.style.opacity = '1';
+    db.style.transition = 'opacity 0.25s ease';
+
+    // Animate h-bars in
+    requestAnimationFrame(() => {
+      db.querySelectorAll('.hbar-fill[data-pct]').forEach(el => {
+        el.style.width = el.dataset.pct + '%';
+      });
+    });
+  });
+}
+
+/* ══════════════════════════════════════════
+   UPLOAD HANDLING
+══════════════════════════════════════════ */
+function handleFile(file) {
+  if (!file || !file.name.endsWith('.csv')) {
+    alert('Bitte eine CSV-Datei auswählen.');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const text = e.target.result;
+    const rows = parseCSV(text);
+    const data = processData(rows);
+    if (!data || !data.metrics.length) {
+      alert('Konnte Datei nicht lesen. Bitte überprüfe das Format.');
+      return;
+    }
+    data.importedAt = new Date().toISOString();
+    saveData(data);
+    renderDashboard(data);
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+/* ══════════════════════════════════════════
+   APP INIT
+══════════════════════════════════════════ */
+function init() {
+  // Load from storage
+  const saved = loadData();
+  if (saved && saved.metrics && saved.dates) {
+    renderDashboard(saved);
+  }
+
+  // Tab clicks
+  document.getElementById('tabs-nav').addEventListener('click', e => {
+    const tab = e.target.closest('.tab');
+    if (!tab) return;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+    tab.classList.add('on');
+    renderTab(tab.dataset.tab);
+  });
+
+  // Upload button
+  document.getElementById('btn-upload').addEventListener('click', () => {
+    document.getElementById('file-input').click();
+  });
+
+  // File input
+  document.getElementById('file-input').addEventListener('change', e => {
+    if (e.target.files[0]) handleFile(e.target.files[0]);
+    e.target.value = '';
+  });
+
+  // Drop zone (empty state)
+  const dz = document.getElementById('drop-zone');
+  dz.addEventListener('click', () => document.getElementById('file-input').click());
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault();
+    dz.classList.remove('over');
+    if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+  });
+
+  // Drag & drop on whole page (when data already loaded)
+  document.addEventListener('dragover', e => e.preventDefault());
+  document.addEventListener('drop', e => {
+    e.preventDefault();
+    if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+  });
+
+  // Clear button
+  document.getElementById('btn-clear').addEventListener('click', () => {
+    if (confirm('Alle Daten löschen?')) {
+      clearData();
+      _appData = null;
+      _activeTab = 'overview';
+      document.getElementById('dashboard').style.display = 'none';
+      document.getElementById('empty-state').style.display = 'flex';
+      document.getElementById('tabs-nav').style.display = 'none';
+      document.getElementById('btn-clear').style.display = 'none';
+      document.getElementById('last-updated').textContent = '';
+      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('on', i === 0));
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
