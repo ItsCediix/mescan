@@ -6,25 +6,15 @@
 <title>MESCAN · Gesundheitsdashboard</title>
 <style>
 :root {
-  --bg:        #07090f;
-  --bg2:       #0c1020;
-  --bg3:       #111827;
-  --border:    rgba(120,150,200,0.07);
-  --border2:   rgba(120,150,200,0.13);
-  --teal:      #00c9a7;
-  --teal-dim:  rgba(0,201,167,0.12);
-  --blue:      #4f9cf9;
-  --amber:     #ffb340;
-  --pos:       #2fd180;
-  --pos-dim:   rgba(47,209,128,0.12);
-  --neg:       #ff5252;
-  --neg-dim:   rgba(255,82,82,0.12);
-  --neu-dim:   rgba(120,150,200,0.08);
-  --text:      #e8edf5;
-  --text2:     #7a8fa8;
-  --text3:     #3d5060;
-  --r:         12px;
-  --rl:        18px;
+  --bg:#07090f;--bg2:#0c1020;--bg3:#111827;
+  --border:rgba(120,150,200,0.07);--border2:rgba(120,150,200,0.13);
+  --teal:#00c9a7;--teal-dim:rgba(0,201,167,0.12);
+  --blue:#4f9cf9;--amber:#ffb340;
+  --pos:#2fd180;--pos-dim:rgba(47,209,128,0.12);
+  --neg:#ff5252;--neg-dim:rgba(255,82,82,0.12);
+  --neu-dim:rgba(120,150,200,0.08);
+  --text:#e8edf5;--text2:#7a8fa8;--text3:#3d5060;
+  --r:12px;--rl:18px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{min-height:100vh;background:var(--bg);color:var(--text);
@@ -35,7 +25,7 @@ body::before{content:'';position:fixed;top:-20%;left:50%;transform:translateX(-5
   background:radial-gradient(ellipse,rgba(0,201,167,0.05) 0%,transparent 70%);
   pointer-events:none;z-index:0}
 
-/* ── HEADER ─────────────────────────────── */
+/* HEADER */
 header{position:sticky;top:0;z-index:100;
   background:rgba(7,9,15,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);padding:0 24px;height:60px;
@@ -53,9 +43,9 @@ header{position:sticky;top:0;z-index:100;
 .btn-primary{background:var(--teal-dim);border-color:rgba(0,201,167,.3);color:var(--teal)}
 .btn-primary:hover{background:rgba(0,201,167,.22);border-color:rgba(0,201,167,.5)}
 .btn-ghost{background:transparent;border-color:var(--border2);color:var(--text2);font-size:11px;padding:5px 10px}
-.btn-ghost:hover{border-color:var(--border2);color:var(--text);background:var(--bg3)}
+.btn-ghost:hover{color:var(--text);background:var(--bg3)}
 
-/* ── TABS ───────────────────────────────── */
+/* TABS */
 #tabs-nav{display:flex;align-items:flex-end;gap:2px;padding:14px 24px 0;
   border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;position:relative;z-index:1}
 #tabs-nav::-webkit-scrollbar{display:none}
@@ -68,7 +58,7 @@ header{position:sticky;top:0;z-index:100;
   border-bottom-color:var(--bg2);margin-bottom:-1px;padding-bottom:10px}
 .tab-ic{font-size:13px}
 
-/* ── LAYOUT ─────────────────────────────── */
+/* LAYOUT */
 #main{max-width:1400px;margin:0 auto;padding:28px 24px;position:relative;z-index:1}
 .tab-content{animation:fadeUp .3s ease both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -76,33 +66,38 @@ header{position:sticky;top:0;z-index:100;
   letter-spacing:1.2px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
 .grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:24px}
 .grid-charts{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:18px;margin-bottom:24px}
-.grid-charts.two{grid-template-columns:repeat(2,1fr)}
 .full{grid-column:1/-1}
 
-/* ── METRIC CARD ────────────────────────── */
+/* METRIC CARD */
 .mcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
-  padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s}
+  padding:16px 18px;position:relative;overflow:hidden;
+  cursor:pointer;transition:border-color .18s,transform .18s,box-shadow .18s;
+  -webkit-tap-highlight-color:transparent;outline:none}
 .mcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:var(--card-color,var(--teal));opacity:.5}
-.mcard:hover{border-color:var(--border2)}
+  background:var(--card-color,var(--teal));opacity:.55;transition:opacity .18s}
+.mcard:hover,.mcard:focus{border-color:var(--border2);transform:translateY(-2px);
+  box-shadow:0 8px 28px rgba(0,0,0,.35)}
+.mcard:hover::before{opacity:1}
+.mcard:active{transform:translateY(0);box-shadow:none}
+.tap-hint{position:absolute;bottom:9px;right:11px;font-size:9px;font-weight:700;
+  color:var(--text3);letter-spacing:.5px;text-transform:uppercase;
+  opacity:0;transition:opacity .18s;pointer-events:none}
+.mcard:hover .tap-hint,.mcard:focus .tap-hint{opacity:1}
 .mcard-label{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.9px;
-  text-transform:uppercase;margin-bottom:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  text-transform:uppercase;margin-bottom:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:16px}
 .mcard-val-row{display:flex;align-items:baseline;gap:5px;margin-bottom:6px}
 .mcard-val{font-size:26px;font-weight:800;color:var(--text);letter-spacing:-1px;line-height:1}
 .mcard-unit{font-size:12px;color:var(--text2);font-weight:500}
-.badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;
-  padding:2px 8px;border-radius:20px}
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
 .badge.pos{background:var(--pos-dim);color:var(--pos)}
 .badge.neg{background:var(--neg-dim);color:var(--neg)}
 .badge.neu{background:var(--neu-dim);color:var(--text3)}
 .mcard-prev{font-size:11px;color:var(--text3);margin-top:3px}
 
-/* ── CHART CARD ─────────────────────────── */
-.ccard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);
-  padding:20px 22px;transition:border-color .2s}
+/* CHART CARD */
+.ccard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:20px 22px;transition:border-color .2s}
 .ccard:hover{border-color:var(--border2)}
-.ccard-hdr{display:flex;align-items:flex-start;justify-content:space-between;
-  margin-bottom:14px;gap:10px}
+.ccard-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;gap:10px}
 .ccard-title{font-size:13px;font-weight:700;color:var(--text);letter-spacing:.2px}
 .ccard-sub{font-size:11px;color:var(--text3);margin-top:2px}
 .legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:10px}
@@ -111,7 +106,7 @@ header{position:sticky;top:0;z-index:100;
 .chart-wrap{width:100%;overflow:hidden}
 .chart-wrap svg{width:100%;height:auto;display:block;overflow:visible}
 
-/* ── DONUT ──────────────────────────────── */
+/* DONUT */
 .donut-wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .donut-legend{flex:1;display:flex;flex-direction:column;gap:9px;min-width:120px}
 .donut-row{display:flex;align-items:center;gap:8px;font-size:12px}
@@ -119,31 +114,88 @@ header{position:sticky;top:0;z-index:100;
 .donut-name{color:var(--text2);flex:1}
 .donut-pct{color:var(--text);font-weight:800;font-size:13px}
 
-/* ── H-BARS ─────────────────────────────── */
-.hbar-item{margin-bottom:13px}
+/* H-BARS */
+.hbar-item{margin-bottom:13px;cursor:pointer;transition:opacity .15s;-webkit-tap-highlight-color:transparent}
+.hbar-item:hover{opacity:.78}
 .hbar-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
 .hbar-name{font-size:12px;color:var(--text2)}
 .hbar-right{display:flex;align-items:center;gap:8px}
 .hbar-delta{font-size:11px}
 .hbar-val{font-size:13px;font-weight:800;color:var(--text)}
 .hbar-track{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
-.hbar-fill{height:100%;border-radius:3px;transition:width .9s cubic-bezier(.4,0,.2,1)}
-@keyframes barIn{from{width:0}to{width:var(--w)}}
+.hbar-fill{height:100%;border-radius:3px;width:0;transition:width .9s cubic-bezier(.4,0,.2,1)}
 
-/* ── TRAINING ───────────────────────────── */
+/* TRAINING EXERCISE CARDS */
 .grid-ex{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:24px}
-.ex-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px}
-.ex-name{font-size:13px;font-weight:800;color:var(--text);margin-bottom:12px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ex-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;
-  border-bottom:1px solid var(--border)}
+.ex-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;transition:border-color .18s}
+.ex-card:hover{border-color:var(--border2)}
+.ex-name{font-size:13px;font-weight:800;color:var(--text);margin-bottom:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ex-row{display:flex;justify-content:space-between;align-items:center;
+  padding:7px 6px;margin:0 -6px;border-bottom:1px solid var(--border);
+  cursor:pointer;border-radius:6px;transition:background .15s;-webkit-tap-highlight-color:transparent}
 .ex-row:last-child{border-bottom:none}
+.ex-row:hover{background:rgba(255,255,255,.04)}
 .ex-type{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px}
 .ex-val-row{display:flex;align-items:baseline;gap:4px}
 .ex-val{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.5px}
 .ex-unit{font-size:11px;color:var(--text2)}
 
-/* ── EMPTY STATE ────────────────────────── */
+/* MODAL */
+#modal-overlay{position:fixed;inset:0;z-index:500;
+  background:rgba(4,6,12,0.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;pointer-events:none;transition:opacity .22s ease}
+#modal-overlay.open{opacity:1;pointer-events:all}
+#modal-box{background:var(--bg2);border:1px solid var(--border2);border-radius:22px;
+  width:100%;max-width:700px;max-height:88vh;overflow-y:auto;
+  box-shadow:0 32px 80px rgba(0,0,0,.7);
+  transform:translateY(24px) scale(.97);
+  transition:transform .28s cubic-bezier(.34,1.28,.64,1),opacity .22s ease;
+  opacity:0;scrollbar-width:thin;scrollbar-color:var(--text3) transparent}
+#modal-box::-webkit-scrollbar{width:4px}
+#modal-box::-webkit-scrollbar-thumb{background:var(--text3);border-radius:2px}
+#modal-overlay.open #modal-box{transform:translateY(0) scale(1);opacity:1}
+#modal-header{display:flex;align-items:flex-start;justify-content:space-between;
+  padding:22px 24px 16px;gap:12px;position:sticky;top:0;
+  background:var(--bg2);z-index:2;border-radius:22px 22px 0 0;
+  border-bottom:1px solid var(--border)}
+.modal-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#modal-title{font-size:19px;font-weight:800;color:var(--text);letter-spacing:-.3px}
+#modal-cat-badge{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;
+  letter-spacing:.9px;background:var(--bg3);border:1px solid var(--border);
+  padding:3px 9px;border-radius:20px}
+#modal-meta{font-size:12px;color:var(--text3);margin-top:3px}
+#modal-close{width:34px;height:34px;border-radius:50%;background:var(--bg3);
+  border:1px solid var(--border);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:15px;color:var(--text2);flex-shrink:0;line-height:1;
+  transition:all .15s}
+#modal-close:hover{background:var(--neg-dim);border-color:rgba(255,82,82,.3);color:var(--neg)}
+#modal-body{padding:20px 24px 28px}
+.modal-stat-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+.modal-stat{background:var(--bg3);border:1px solid var(--border);border-radius:11px;
+  padding:13px 16px;flex:1;min-width:100px}
+.modal-stat-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;
+  letter-spacing:.8px;margin-bottom:5px}
+.modal-stat-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.5px;line-height:1.15}
+.modal-stat-sub{font-size:11px;color:var(--text2);margin-top:3px}
+.modal-chart-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;
+  letter-spacing:1px;margin-bottom:10px}
+.modal-accent-bar{height:3px;border-radius:2px;margin-bottom:20px;opacity:.6}
+.modal-data-table{width:100%;border-collapse:collapse;margin-top:22px}
+.modal-data-table th{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;
+  letter-spacing:.7px;padding:8px 10px;border-bottom:1px solid var(--border);text-align:left}
+.modal-data-table td{font-size:13px;padding:10px 10px;border-bottom:1px solid var(--border);color:var(--text)}
+.modal-data-table tr:last-child td{border-bottom:none}
+.modal-data-table tbody tr{transition:background .12s}
+.modal-data-table tbody tr:hover{background:rgba(255,255,255,.025)}
+.td-date{color:var(--text2);font-size:12px;white-space:nowrap}
+.td-val{font-weight:800;font-size:15px}
+.td-delta{text-align:right;white-space:nowrap}
+.delta-pos{color:var(--pos);font-weight:700}
+.delta-neg{color:var(--neg);font-weight:700}
+.delta-neu{color:var(--text3)}
+
+/* EMPTY STATE */
 #empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;
   min-height:65vh;text-align:center;gap:14px}
 .empty-icon{font-size:56px;opacity:.25;line-height:1}
@@ -156,48 +208,46 @@ header{position:sticky;top:0;z-index:100;
 .dropzone-title{font-size:14px;font-weight:700;color:var(--text)}
 .dropzone-sub{font-size:12px;color:var(--text2);margin-top:4px}
 
-/* ── OVERVIEW STATS ─────────────────────── */
+/* OVERVIEW RING CARD */
 .overview-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
   padding:20px;display:flex;align-items:center;gap:16px}
-.stat-ring-wrap{flex-shrink:0}
-.stat-body{}
-.stat-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:4px}
-.stat-val{font-size:28px;font-weight:800;color:var(--text);letter-spacing:-1px;line-height:1}
-.stat-sub{font-size:12px;color:var(--text2);margin-top:3px}
 
-/* ── TOOLTIP ────────────────────────────── */
+/* TOOLTIP */
 #tooltip{position:fixed;pointer-events:none;background:var(--bg3);border:1px solid var(--border2);
   border-radius:9px;padding:10px 14px;font-size:12px;color:var(--text);
   z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.6);opacity:0;transition:opacity .12s;max-width:210px}
 #tooltip.on{opacity:1}
-.tip-date{color:var(--text2);font-size:10px;font-weight:700;letter-spacing:.7px;
-  text-transform:uppercase;margin-bottom:6px}
+.tip-date{color:var(--text2);font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;margin-bottom:6px}
 .tip-row{display:flex;align-items:center;gap:7px;margin-top:3px}
 .tip-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .tip-name{color:var(--text2);flex:1}
 .tip-val{color:var(--text);font-weight:800;margin-left:8px}
 
-/* ── MISC ───────────────────────────────── */
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--text3);border-radius:3px}
 
-/* ── RESPONSIVE ─────────────────────────── */
+/* RESPONSIVE */
 @media(max-width:800px){
   header{padding:0 16px}
   #tabs-nav{padding:10px 16px 0}
   #main{padding:20px 16px}
-  .grid-charts,.grid-charts.two{grid-template-columns:1fr}
+  .grid-charts{grid-template-columns:1fr}
   .grid-cards{grid-template-columns:repeat(2,1fr)}
   .logo-sub{display:none}
   #last-updated{display:none}
   .mcard-val{font-size:22px}
   .ccard{padding:16px 16px}
+  #modal-header{padding:16px 18px 14px}
+  #modal-body{padding:14px 18px 24px}
+  .modal-stat-val{font-size:18px}
 }
 @media(max-width:420px){
   .grid-cards{grid-template-columns:1fr}
   .tab{padding:8px 13px;font-size:11px}
   .tab-ic{display:none}
+  #modal-overlay{padding:0;align-items:flex-end}
+  #modal-box{border-radius:22px 22px 0 0;max-height:93vh}
 }
 </style>
 </head>
@@ -213,7 +263,7 @@ header{position:sticky;top:0;z-index:100;
   </div>
   <div class="hdr-right">
     <span id="last-updated"></span>
-    <button class="btn btn-ghost" id="btn-clear" style="display:none" title="Alle Daten löschen">✕ Löschen</button>
+    <button class="btn btn-ghost" id="btn-clear" style="display:none">✕ Löschen</button>
     <button class="btn btn-primary" id="btn-upload">
       <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
         <path d="M6.5 1v8M6.5 1L4 3.5M6.5 1L9 3.5M1 10.5v1C1 12 1.5 12.5 2 12.5h9c.5 0 1-.5 1-1v-1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -237,7 +287,7 @@ header{position:sticky;top:0;z-index:100;
   <div id="empty-state">
     <div class="empty-icon">📊</div>
     <div class="empty-title">Noch keine Daten</div>
-    <div class="empty-sub">Lade deine wöchentliche mescan CSV-Datei hoch, um deine Gesundheitsdaten zu visualisieren und Fortschritte zu verfolgen.</div>
+    <div class="empty-sub">Lade deine wöchentliche mescan CSV-Datei hoch, um deine Gesundheitsdaten zu visualisieren.</div>
     <div class="dropzone" id="drop-zone">
       <div class="dropzone-ic">⬆</div>
       <div class="dropzone-title">CSV-Datei hier ablegen</div>
@@ -247,910 +297,719 @@ header{position:sticky;top:0;z-index:100;
   <div id="dashboard" style="display:none"></div>
 </div>
 
+<!-- DETAIL MODAL -->
+<div id="modal-overlay" role="dialog" aria-modal="true">
+  <div id="modal-box">
+    <div id="modal-header">
+      <div>
+        <div class="modal-title-row">
+          <span id="modal-title">–</span>
+          <span id="modal-cat-badge"></span>
+        </div>
+        <div id="modal-meta"></div>
+      </div>
+      <button id="modal-close" aria-label="Schließen">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
 <div id="tooltip"></div>
 
 <script>
 'use strict';
 
-/* ══════════════════════════════════════════
-   CONSTANTS
-══════════════════════════════════════════ */
 const STORAGE_KEY = 'mescan_v1';
+const COLORS = ['#00c9a7','#4f9cf9','#ffb340','#ff5252','#c678dd','#20c1e9','#f7c59f','#7bed9f','#a29bfe','#fd79a8'];
 
-const COLORS = ['#00c9a7','#4f9cf9','#ffb340','#ff5252','#c678dd','#20c1e9','#f7c59f'];
-
-// Direction: 'higher' = more is better, 'lower' = less is better, 'neutral' = no judgement
+// higher=more is good, lower=less is good, neutral=no judgement
 const DIR = {
-  'Herzfrequenz':              'lower',
-  'HRV-Trainingsbereitschaft': 'higher',
-  'Max. Herzfrequenz':         'neutral',
-  'BMI':                       'neutral',
-  'Fettfreie Masse':           'higher',
-  'Wasser':                    'higher',
-  'Muskelprotein':             'higher',
-  'Passives Gewebe':           'lower',
-  'Fettmasse ges. ':           'lower',
-  'Essentielles Fett':         'neutral',
-  'Fettreserve':               'lower',
-  'Überschüssiges Fett':       'lower',
-  'Gewicht':                   'neutral',
-  'Muskelmasse':               'higher',
-  'Torso':                     'higher',
-  'Arm Rechts':                'higher',
-  'Arm Links':                 'higher',
-  'Bein Rechts':               'higher',
-  'Bein Links':                'higher',
-  'Viszerales Fett':           'lower',
-  'Wasser (Gesamt)':           'higher',
-  'Bio Age':                   'lower',
-  'Zellfitnesswert':           'higher',
-  'Sauerstoffsättigung':       'neutral',
-  'Wasserhaushalt':            'neutral',
-  'Intrazelluläres Wasser':    'higher',
-  'Extrazelluläres Wasser':    'higher',
+  'Herzfrequenz':'lower','HRV-Trainingsbereitschaft':'higher','Max. Herzfrequenz':'neutral',
+  'BMI':'neutral','Fettfreie Masse':'higher','Wasser':'higher','Muskelprotein':'higher',
+  'Passives Gewebe':'lower','Fettmasse ges. ':'lower','Essentielles Fett':'neutral',
+  'Fettreserve':'lower','Überschüssiges Fett':'lower','Gewicht':'neutral',
+  'Muskelmasse':'higher','Torso':'higher','Arm Rechts':'higher','Arm Links':'higher',
+  'Bein Rechts':'higher','Bein Links':'higher','Viszerales Fett':'lower',
+  'Wasser (Gesamt)':'higher','Bio Age':'lower','Zellfitnesswert':'higher',
+  'Sauerstoffsättigung':'neutral','Wasserhaushalt':'neutral',
+  'Intrazelluläres Wasser':'higher','Extrazelluläres Wasser':'higher',
+};
+const CAT_COLORS = {
+  'Herz':'#ff5252','Körperanalyse':'#00c9a7','Stoffwechsel':'#ffb340','Training':'#4f9cf9'
 };
 
-/* ══════════════════════════════════════════
-   CSV PARSING
-══════════════════════════════════════════ */
+/* ── CSV ── */
 function parseCSVLine(line) {
-  const cells = [];
-  let cell = '', inQ = false;
-  for (let i = 0; i < line.length; i++) {
-    const c = line[i];
-    if (c === '"') { inQ = !inQ; }
-    else if (c === ',' && !inQ) { cells.push(cell); cell = ''; }
-    else { cell += c; }
+  const cells=[];let cell='',inQ=false;
+  for(let i=0;i<line.length;i++){
+    const c=line[i];
+    if(c==='"'){inQ=!inQ;}
+    else if(c===','&&!inQ){cells.push(cell);cell='';}
+    else{cell+=c;}
   }
-  cells.push(cell);
-  return cells;
+  cells.push(cell);return cells;
 }
-
-function parseCSV(text) {
-  return text.split('\n')
-    .map(l => l.trim())
-    .filter(l => l.length > 0)
-    .map(parseCSVLine);
+function parseCSV(text){
+  return text.split('\n').map(l=>l.trim()).filter(l=>l.length>0).map(parseCSVLine);
 }
-
-function processData(rows) {
-  if (rows.length < 3) return null;
-  // Row index 1 is the header: ['','Kategorie','Metrik','Einheit', date1, date2, ...]
-  const header = rows[1];
-  const rawDates = header.slice(4);
-  const dates = rawDates.filter(d => d && !d.includes('?')).map(d => d.trim());
-
-  const metrics = [];
-  for (let i = 2; i < rows.length; i++) {
-    const row = rows[i];
-    if (!row[1] || !row[1].trim()) continue;
-    const m = {
-      category: row[1].trim(),
-      name:     row[2] ? row[2].trim() : '',
-      unit:     row[3] ? row[3].trim() : '',
-      values:   {}
-    };
-    dates.forEach((d, di) => {
-      const raw = (row[4 + di] || '').trim();
-      if (raw) {
-        const n = parseFloat(raw.replace(',', '.'));
-        if (!isNaN(n)) m.values[d] = n;
-      }
+function processData(rows){
+  if(rows.length<3)return null;
+  const header=rows[1];
+  const dates=header.slice(4).filter(d=>d&&!d.includes('?')).map(d=>d.trim());
+  const metrics=[];
+  for(let i=2;i<rows.length;i++){
+    const row=rows[i];
+    if(!row[1]||!row[1].trim())continue;
+    const m={category:row[1].trim(),name:row[2]?row[2].trim():'',unit:row[3]?row[3].trim():'',values:{}};
+    dates.forEach((d,di)=>{
+      const raw=(row[4+di]||'').trim();
+      if(raw){const n=parseFloat(raw.replace(',','.'));if(!isNaN(n))m.values[d]=n;}
     });
     metrics.push(m);
   }
-  return { dates, metrics, importedAt: new Date().toISOString() };
+  return{dates,metrics,importedAt:new Date().toISOString()};
 }
 
-/* ══════════════════════════════════════════
-   STORAGE
-══════════════════════════════════════════ */
-function saveData(data) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
-}
-function loadData() {
-  try {
-    const s = localStorage.getItem(STORAGE_KEY);
-    return s ? JSON.parse(s) : null;
-  } catch(e) { return null; }
-}
-function clearData() {
-  localStorage.removeItem(STORAGE_KEY);
-}
+/* ── STORAGE ── */
+function saveData(d){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}catch(e){}}
+function loadData(){try{const s=localStorage.getItem(STORAGE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
+function clearData(){localStorage.removeItem(STORAGE_KEY);}
 
-/* ══════════════════════════════════════════
-   DATA HELPERS
-══════════════════════════════════════════ */
-function getM(metrics, category, name, unit) {
-  return metrics.find(m =>
-    m.category === category &&
-    m.name === name &&
-    (unit == null || m.unit === unit)
-  );
+/* ── DATA HELPERS ── */
+function getM(metrics,cat,name,unit){
+  return metrics.find(m=>m.category===cat&&m.name===name&&(unit==null||m.unit===unit));
 }
-function getCat(metrics, category) {
-  return metrics.filter(m => m.category === category);
-}
-function latest(m, dates) {
-  if (!m) return null;
-  for (let i = dates.length - 1; i >= 0; i--) {
-    if (m.values[dates[i]] != null) return { v: m.values[dates[i]], d: dates[i] };
-  }
+function getCat(metrics,cat){return metrics.filter(m=>m.category===cat);}
+function latest(m,dates){
+  if(!m)return null;
+  for(let i=dates.length-1;i>=0;i--){if(m.values[dates[i]]!=null)return{v:m.values[dates[i]],d:dates[i]};}
   return null;
 }
-function prevVal(m, dates) {
-  // Second-to-last non-null
-  const filled = dates.filter(d => m.values[d] != null);
-  if (filled.length < 2) return null;
-  return m.values[filled[filled.length - 2]];
+function prevVal(m,dates){
+  const f=dates.filter(d=>m.values[d]!=null);
+  return f.length<2?null:m.values[f[f.length-2]];
 }
-function delta(m, dates) {
-  const l = latest(m, dates);
-  const p = prevVal(m, dates);
-  if (l == null || p == null) return null;
-  return l.v - p;
+function delta(m,dates){
+  const l=latest(m,dates),p=prevVal(m,dates);
+  return(l==null||p==null)?null:l.v-p;
 }
-function deltaClass(name, d) {
-  if (d == null || d === 0) return 'neu';
-  const dir = DIR[name] || 'neutral';
-  if (dir === 'neutral') return 'neu';
-  if (dir === 'higher') return d > 0 ? 'pos' : 'neg';
-  if (dir === 'lower')  return d < 0 ? 'pos' : 'neg';
-  return 'neu';
+function dirOf(name,unit){return DIR[name]||DIR[unit]||'neutral';}
+function deltaClass(name,unit,d){
+  if(d==null||d===0)return'neu';
+  const dir=dirOf(name,unit);
+  if(dir==='neutral')return'neu';
+  if(dir==='higher')return d>0?'pos':'neg';
+  if(dir==='lower') return d<0?'pos':'neg';
+  return'neu';
 }
-function fmt(n, dec) {
-  if (n == null || isNaN(n)) return '–';
-  if (dec != null) return n.toFixed(dec);
-  return n % 1 === 0 ? String(n) : n.toFixed(1);
+function fmt(n,dec){
+  if(n==null||isNaN(n))return'–';
+  if(dec!=null)return n.toFixed(dec);
+  return n%1===0?String(n):n.toFixed(1);
 }
-function fmtDelta(d) {
-  if (d == null) return null;
-  return (d > 0 ? '+' : '') + fmt(d, 2);
-}
+function fmtDelta(d){return d==null?null:(d>0?'+':'')+fmt(d,2);}
 
-/* ══════════════════════════════════════════
-   TOOLTIP
-══════════════════════════════════════════ */
-const _tips = {};
-let _tipN = 0;
-function regTip(obj) {
-  const id = 'T' + _tipN++;
-  _tips[id] = obj;
-  return id;
+/* ── TOOLTIP ── */
+const _tips={};let _tipN=0;
+function regTip(obj){const id='T'+(_tipN++);_tips[id]=obj;return id;}
+const tipEl=document.getElementById('tooltip');
+function showTip(e,id){
+  const d=_tips[id];if(!d)return;
+  let html=`<div class="tip-date">${d.date}</div>`;
+  d.rows.forEach(r=>{html+=`<div class="tip-row"><span class="tip-dot" style="background:${r.color}"></span><span class="tip-name">${r.name}</span><span class="tip-val">${r.value}</span></div>`;});
+  tipEl.innerHTML=html;tipEl.classList.add('on');posTip(e.clientX,e.clientY);
 }
-const tipEl = document.getElementById('tooltip');
-function showTip(e, id) {
-  const d = _tips[id];
-  if (!d) return;
-  let html = `<div class="tip-date">${d.date}</div>`;
-  d.rows.forEach(r => {
-    html += `<div class="tip-row">
-      <span class="tip-dot" style="background:${r.color}"></span>
-      <span class="tip-name">${r.name}</span>
-      <span class="tip-val">${r.value}</span>
-    </div>`;
-  });
-  tipEl.innerHTML = html;
-  tipEl.classList.add('on');
-  posTip(e.clientX, e.clientY);
+function posTip(cx,cy){
+  const w=tipEl.offsetWidth||180,h=tipEl.offsetHeight||60;
+  let lx=cx+14,ly=cy-10;
+  if(lx+w>window.innerWidth-10)lx=cx-w-14;
+  if(ly+h>window.innerHeight-10)ly=window.innerHeight-h-10;
+  if(ly<10)ly=10;
+  tipEl.style.left=lx+'px';tipEl.style.top=ly+'px';
 }
-function posTip(cx, cy) {
-  const w = tipEl.offsetWidth || 180, h = tipEl.offsetHeight || 60;
-  let lx = cx + 14, ly = cy - 10;
-  if (lx + w > window.innerWidth - 10) lx = cx - w - 14;
-  if (ly + h > window.innerHeight - 10) ly = window.innerHeight - h - 10;
-  if (ly < 10) ly = 10;
-  tipEl.style.left = lx + 'px';
-  tipEl.style.top  = ly + 'px';
-}
-function hideTip() { tipEl.classList.remove('on'); }
+function hideTip(){tipEl.classList.remove('on');}
+document.addEventListener('mouseover',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.tid)showTip(e,t.dataset.tid);});
+document.addEventListener('mousemove',e=>{if(tipEl.classList.contains('on'))posTip(e.clientX,e.clientY);});
+document.addEventListener('mouseout',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.tid)hideTip();});
 
-document.addEventListener('mouseover', e => {
-  const t = e.target;
-  if (t && t.dataset && t.dataset.tid) showTip(e, t.dataset.tid);
-});
-document.addEventListener('mousemove', e => {
-  if (tipEl.classList.contains('on')) posTip(e.clientX, e.clientY);
-});
-document.addEventListener('mouseout', e => {
-  const t = e.target;
-  if (t && t.dataset && t.dataset.tid) hideTip();
-});
-
-/* ══════════════════════════════════════════
-   SVG LINE CHART
-══════════════════════════════════════════ */
-function lineChart(datasets, xLabels, { h = 200, yUnit = '' } = {}) {
-  const W = 540, H = h;
-  const PL = 46, PR = 14, PT = 16, PB = 38;
-  const pw = W - PL - PR, ph = H - PT - PB;
-
-  const allV = datasets.flatMap(ds => ds.values.filter(v => v != null && !isNaN(v)));
-  if (allV.length === 0) return '<p style="color:var(--text3);font-size:12px;padding:20px 0">Nicht genügend Daten</p>';
-
-  let mn = Math.min(...allV), mx = Math.max(...allV);
-  const rng = mx - mn || 1;
-  mn -= rng * 0.18; mx += rng * 0.18;
-
-  const n = xLabels.length;
-  const xs = i => PL + (n > 1 ? (i / (n - 1)) * pw : pw / 2);
-  const ys = v => PT + ph * (1 - (v - mn) / (mx - mn));
-
-  const COLS = COLORS;
-  let out = '<defs>';
-  datasets.forEach((ds, di) => {
-    const c = ds.color || COLS[di % COLS.length];
-    out += `<linearGradient id="g${di}" x1="0" x2="0" y1="0" y2="1">
+/* ── LINE CHART ── */
+function lineChart(datasets,xLabels,{h=200,yUnit=''}={}){
+  const W=540,H=h,PL=46,PR=14,PT=16,PB=38,pw=W-PL-PR,ph=H-PT-PB;
+  const allV=datasets.flatMap(ds=>ds.values.filter(v=>v!=null&&!isNaN(v)));
+  if(!allV.length)return'<p style="color:var(--text3);font-size:12px;padding:16px 0">Nicht genügend Daten</p>';
+  let mn=Math.min(...allV),mx=Math.max(...allV);
+  const rng=mx-mn||1;mn-=rng*.18;mx+=rng*.18;
+  const n=xLabels.length;
+  const xs=i=>PL+(n>1?(i/(n-1))*pw:pw/2);
+  const ys=v=>PT+ph*(1-(v-mn)/(mx-mn));
+  let out='<defs>';
+  datasets.forEach((ds,di)=>{
+    const c=ds.color||COLORS[di%COLORS.length];
+    out+=`<linearGradient id="g${di}" x1="0" x2="0" y1="0" y2="1">
       <stop offset="0%" stop-color="${c}" stop-opacity=".28"/>
       <stop offset="100%" stop-color="${c}" stop-opacity="0"/>
     </linearGradient>`;
   });
-  out += '</defs>';
-
-  // Grid
-  for (let i = 0; i <= 4; i++) {
-    const gy = PT + (ph / 4) * i;
-    const gv = mx - (mx - mn) * (i / 4);
-    out += `<line x1="${PL}" y1="${gy}" x2="${W-PR}" y2="${gy}" stroke="#151e30" stroke-width="1"/>`;
-    out += `<text x="${PL-5}" y="${gy+3.5}" text-anchor="end" fill="#3d5060" font-size="9.5" font-family="Helvetica Neue,sans-serif">${fmt(gv,1)}</text>`;
+  out+='</defs>';
+  for(let i=0;i<=4;i++){
+    const gy=PT+(ph/4)*i,gv=mx-(mx-mn)*(i/4);
+    out+=`<line x1="${PL}" y1="${gy}" x2="${W-PR}" y2="${gy}" stroke="#151e30" stroke-width="1"/>`;
+    out+=`<text x="${PL-5}" y="${gy+3.5}" text-anchor="end" fill="#3d5060" font-size="9.5" font-family="Helvetica Neue,sans-serif">${fmt(gv,1)}</text>`;
   }
-
-  // X labels
-  xLabels.forEach((lbl, i) => {
-    const short = lbl.split('.').slice(0,2).join('.');
-    out += `<text x="${xs(i)}" y="${H-5}" text-anchor="middle" fill="#3d5060" font-size="9.5" font-family="Helvetica Neue,sans-serif">${short}</text>`;
+  xLabels.forEach((lbl,i)=>{
+    const short=lbl.split('.').slice(0,2).join('.');
+    out+=`<text x="${xs(i)}" y="${H-5}" text-anchor="middle" fill="#3d5060" font-size="9.5" font-family="Helvetica Neue,sans-serif">${short}</text>`;
   });
-
-  // Datasets
-  datasets.forEach((ds, di) => {
-    const c = ds.color || COLS[di % COLS.length];
-
-    // Build segments (split on nulls)
-    const segs = [];
-    let cur = [];
-    ds.values.forEach((v, i) => {
-      if (v != null && !isNaN(v)) { cur.push({i, v}); }
-      else if (cur.length) { segs.push(cur); cur = []; }
+  datasets.forEach((ds,di)=>{
+    const c=ds.color||COLORS[di%COLORS.length];
+    const segs=[];let cur=[];
+    ds.values.forEach((v,i)=>{
+      if(v!=null&&!isNaN(v)){cur.push({i,v});}
+      else if(cur.length){segs.push(cur);cur=[];}
     });
-    if (cur.length) segs.push(cur);
-
-    segs.forEach(seg => {
-      if (!seg.length) return;
-      if (seg.length === 1) {
-        const p = seg[0];
-        out += `<circle cx="${xs(p.i)}" cy="${ys(p.v)}" r="4" fill="${c}" stroke="#0c1020" stroke-width="2"/>`;
+    if(cur.length)segs.push(cur);
+    segs.forEach(seg=>{
+      if(!seg.length)return;
+      if(seg.length===1){
+        const p=seg[0];
+        out+=`<circle cx="${xs(p.i).toFixed(1)}" cy="${ys(p.v).toFixed(1)}" r="4" fill="${c}" stroke="#0c1020" stroke-width="2"/>`;
         return;
       }
-      // Build smooth bezier path
-      let d = `M ${xs(seg[0].i).toFixed(1)} ${ys(seg[0].v).toFixed(1)}`;
-      for (let k = 1; k < seg.length; k++) {
-        const prev = seg[k-1], curr = seg[k];
-        const mx2 = ((xs(prev.i) + xs(curr.i)) / 2).toFixed(1);
-        d += ` C ${mx2},${ys(prev.v).toFixed(1)} ${mx2},${ys(curr.v).toFixed(1)} ${xs(curr.i).toFixed(1)},${ys(curr.v).toFixed(1)}`;
+      let d=`M ${xs(seg[0].i).toFixed(1)} ${ys(seg[0].v).toFixed(1)}`;
+      for(let k=1;k<seg.length;k++){
+        const prev=seg[k-1],curr=seg[k];
+        const mx2=((xs(prev.i)+xs(curr.i))/2).toFixed(1);
+        d+=` C ${mx2},${ys(prev.v).toFixed(1)} ${mx2},${ys(curr.v).toFixed(1)} ${xs(curr.i).toFixed(1)},${ys(curr.v).toFixed(1)}`;
       }
-      // Fill
-      const fd = d + ` L ${xs(seg[seg.length-1].i).toFixed(1)},${(PT+ph).toFixed(1)} L ${xs(seg[0].i).toFixed(1)},${(PT+ph).toFixed(1)} Z`;
-      out += `<path d="${fd}" fill="url(#g${di})" stroke="none"/>`;
-      // Line
-      out += `<path d="${d}" fill="none" stroke="${c}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+      const fd=d+` L ${xs(seg[seg.length-1].i).toFixed(1)},${(PT+ph).toFixed(1)} L ${xs(seg[0].i).toFixed(1)},${(PT+ph).toFixed(1)} Z`;
+      out+=`<path d="${fd}" fill="url(#g${di})" stroke="none"/>`;
+      out+=`<path d="${d}" fill="none" stroke="${c}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;
     });
-
-    // Dots + hover
-    ds.values.forEach((v, i) => {
-      if (v == null || isNaN(v)) return;
-      const tid = regTip({ date: xLabels[i], rows: [{ name: ds.label, value: fmt(v) + (yUnit ? ' ' + yUnit : ''), color: c }] });
-      out += `<circle cx="${xs(i).toFixed(1)}" cy="${ys(v).toFixed(1)}" r="3.5" fill="${c}" stroke="#0c1020" stroke-width="2"/>`;
-      out += `<circle cx="${xs(i).toFixed(1)}" cy="${ys(v).toFixed(1)}" r="13" fill="transparent" data-tid="${tid}" style="cursor:crosshair"/>`;
+    ds.values.forEach((v,i)=>{
+      if(v==null||isNaN(v))return;
+      const tid=regTip({date:xLabels[i],rows:[{name:ds.label,value:fmt(v)+(yUnit?' '+yUnit:''),color:c}]});
+      out+=`<circle cx="${xs(i).toFixed(1)}" cy="${ys(v).toFixed(1)}" r="3.5" fill="${c}" stroke="#0c1020" stroke-width="2"/>`;
+      out+=`<circle cx="${xs(i).toFixed(1)}" cy="${ys(v).toFixed(1)}" r="13" fill="transparent" data-tid="${tid}" style="cursor:crosshair"/>`;
     });
   });
-
-  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">${out}</svg>`;
+  return`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">${out}</svg>`;
 }
 
-/* ══════════════════════════════════════════
-   SVG DONUT CHART
-══════════════════════════════════════════ */
-function donutChart(segments, { size = 160, thick = 30 } = {}) {
-  const cx = size / 2, cy = size / 2, r = (size - thick) / 2;
-  const total = segments.reduce((s, sg) => s + sg.v, 0);
-  if (total === 0) return '';
-
-  let angle = -Math.PI / 2;
-  const GAP = 0.04; // radians gap
-  let arcs = '';
-
-  segments.forEach(sg => {
-    const frac = sg.v / total;
-    const span = frac * 2 * Math.PI - GAP;
-    if (span <= 0) { angle += frac * 2 * Math.PI; return; }
-    const sa = angle + GAP / 2;
-    const ea = sa + span;
-    const x1 = cx + r * Math.cos(sa), y1 = cy + r * Math.sin(sa);
-    const x2 = cx + r * Math.cos(ea), y2 = cy + r * Math.sin(ea);
-    const big = span > Math.PI ? 1 : 0;
-    arcs += `<path d="M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${r} ${r} 0 ${big} 1 ${x2.toFixed(2)} ${y2.toFixed(2)}"
-      fill="none" stroke="${sg.color}" stroke-width="${thick}" stroke-linecap="round"/>`;
-    angle += frac * 2 * Math.PI;
+/* ── DONUT ── */
+function donutChart(segments,{size=160,thick=30}={}){
+  const cx=size/2,cy=size/2,r=(size-thick)/2;
+  const total=segments.reduce((s,sg)=>s+sg.v,0);
+  if(!total)return'';
+  let angle=-Math.PI/2,arcs='';
+  segments.forEach(sg=>{
+    const frac=sg.v/total,span=frac*2*Math.PI-0.04;
+    if(span<=0){angle+=frac*2*Math.PI;return;}
+    const sa=angle+0.02,ea=sa+span;
+    const x1=cx+r*Math.cos(sa),y1=cy+r*Math.sin(sa);
+    const x2=cx+r*Math.cos(ea),y2=cy+r*Math.sin(ea);
+    arcs+=`<path d="M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${r} ${r} 0 ${span>Math.PI?1:0} 1 ${x2.toFixed(2)} ${y2.toFixed(2)}" fill="none" stroke="${sg.color}" stroke-width="${thick}" stroke-linecap="round"/>`;
+    angle+=frac*2*Math.PI;
   });
-
-  // Center text (first segment = lean mass)
-  const centerVal = segments[0] ? segments[0].v.toFixed(1) + '%' : '';
-  const centerLbl = segments[0] ? segments[0].name.split(' ')[0] : '';
-
-  const svg = `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" style="flex-shrink:0">
+  const svg=`<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" style="flex-shrink:0">
     ${arcs}
-    <text x="${cx}" y="${cy - 5}" text-anchor="middle" fill="#e8edf5" font-size="16" font-weight="800" font-family="Helvetica Neue,sans-serif">${centerVal}</text>
-    <text x="${cx}" y="${cy + 10}" text-anchor="middle" fill="#7a8fa8" font-size="8.5" font-family="Helvetica Neue,sans-serif" letter-spacing="0.5">${centerLbl}</text>
+    <text x="${cx}" y="${cy-5}" text-anchor="middle" fill="#e8edf5" font-size="16" font-weight="800" font-family="Helvetica Neue,sans-serif">${segments[0]?segments[0].v.toFixed(1)+'%':''}</text>
+    <text x="${cx}" y="${cy+10}" text-anchor="middle" fill="#7a8fa8" font-size="8.5" font-family="Helvetica Neue,sans-serif">${segments[0]?segments[0].name.split(' ')[0]:''}</text>
   </svg>`;
-
-  const legend = segments.map(sg => `
-    <div class="donut-row">
-      <span class="donut-dot" style="background:${sg.color}"></span>
-      <span class="donut-name">${sg.name}</span>
-      <span class="donut-pct">${sg.v.toFixed(1)}%</span>
-    </div>`).join('');
-
-  return `<div class="donut-wrap">${svg}<div class="donut-legend">${legend}</div></div>`;
+  const legend=segments.map(sg=>`<div class="donut-row"><span class="donut-dot" style="background:${sg.color}"></span><span class="donut-name">${sg.name}</span><span class="donut-pct">${sg.v.toFixed(1)}%</span></div>`).join('');
+  return`<div class="donut-wrap">${svg}<div class="donut-legend">${legend}</div></div>`;
 }
 
-/* ══════════════════════════════════════════
-   HORIZONTAL BAR CHART
-══════════════════════════════════════════ */
-function hBars(items, maxV, { color = 'var(--teal)', unit = '' } = {}) {
-  return items.map((it, idx) => {
-    const pct = maxV > 0 ? Math.min(100, (it.v / maxV) * 100) : 0;
-    const d = it.delta;
-    let dHtml = '';
-    if (d != null && d !== 0) {
-      const cls = d > 0 ? 'var(--pos)' : 'var(--neg)';
-      dHtml = `<span class="hbar-delta" style="color:${cls}">${d > 0 ? '+' : ''}${fmt(d, 2)} ${unit}</span>`;
-    }
-    const barStyle = `height:100%;width:${pct.toFixed(1)}%;background:${color};border-radius:3px;animation:none;transition:width .9s ${idx*0.08}s cubic-bezier(.4,0,.2,1)`;
-    return `<div class="hbar-item">
-      <div class="hbar-hdr">
-        <span class="hbar-name">${it.label}</span>
-        <div class="hbar-right">${dHtml}<span class="hbar-val">${fmt(it.v, 2)} ${unit}</span></div>
-      </div>
-      <div class="hbar-track"><div style="${barStyle}" data-pct="${pct.toFixed(1)}"></div></div>
-    </div>`;
-  }).join('');
-}
-
-/* ══════════════════════════════════════════
-   COMPONENTS
-══════════════════════════════════════════ */
-function metricCard(label, m, dates, { color = 'var(--teal)' } = {}) {
-  if (!m) return '';
-  const l = latest(m, dates);
-  if (!l) return '';
-  const d = delta(m, dates);
-  const dc = deltaClass(m.name, d);
-  const dStr = fmtDelta(d);
-  const p = prevVal(m, dates);
-  const badgeHtml = dStr ? `<span class="badge ${dc}">${dc === 'pos' ? '▲' : dc === 'neg' ? '▼' : ''}${dStr} ${m.unit}</span>` : '';
-  const prevHtml = p != null ? `<div class="mcard-prev">Zuvor: ${fmt(p)} ${m.unit}</div>` : '';
-  return `<div class="mcard" style="--card-color:${color}">
+/* ── METRIC CARD ── */
+function metricCard(label,m,dates,{color='var(--teal)'}={}){
+  if(!m)return'';
+  const l=latest(m,dates);if(!l)return'';
+  const d=delta(m,dates),dc=deltaClass(m.name,m.unit,d),dStr=fmtDelta(d);
+  const p=prevVal(m,dates);
+  const badge=dStr?`<span class="badge ${dc}">${dc==='pos'?'▲':dc==='neg'?'▼':''}${dStr} ${m.unit}</span>`:'';
+  const prev=p!=null?`<div class="mcard-prev">Zuvor: ${fmt(p)} ${m.unit}</div>`:'';
+  const enc=encodeURIComponent(JSON.stringify({cat:m.category,name:m.name,unit:m.unit}));
+  return`<div class="mcard" style="--card-color:${color}" onclick="openModal('${enc}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openModal('${enc}')">
     <div class="mcard-label">${label}</div>
-    <div class="mcard-val-row">
-      <span class="mcard-val">${fmt(l.v)}</span>
-      <span class="mcard-unit">${m.unit}</span>
-    </div>
-    ${badgeHtml}
-    ${prevHtml}
+    <div class="mcard-val-row"><span class="mcard-val">${fmt(l.v)}</span><span class="mcard-unit">${m.unit}</span></div>
+    ${badge}${prev}
+    <span class="tap-hint">Verlauf ↗</span>
   </div>`;
 }
 
-function chartCard(title, sub, legendItems, chartHtml, extraClass = '') {
-  const legend = legendItems.map(li =>
-    `<div class="legend-item"><span class="legend-dot" style="background:${li.c}"></span>${li.n}</div>`
-  ).join('');
-  const legHtml = legendItems.length ? `<div class="legend">${legend}</div>` : '';
-  return `<div class="ccard ${extraClass}">
-    <div class="ccard-hdr">
-      <div>
-        <div class="ccard-title">${title}</div>
-        ${sub ? `<div class="ccard-sub">${sub}</div>` : ''}
-      </div>
-    </div>
-    ${legHtml}
+function chartCard(title,sub,legItems,chartHtml,extraClass=''){
+  const leg=legItems.map(li=>`<div class="legend-item"><span class="legend-dot" style="background:${li.c}"></span>${li.n}</div>`).join('');
+  return`<div class="ccard ${extraClass}">
+    <div class="ccard-hdr"><div><div class="ccard-title">${title}</div>${sub?`<div class="ccard-sub">${sub}</div>`:''}</div></div>
+    ${legItems.length?`<div class="legend">${leg}</div>`:''}
     <div class="chart-wrap">${chartHtml}</div>
   </div>`;
 }
 
 /* ══════════════════════════════════════════
-   TAB: OVERVIEW
+   MODAL — DETAIL VIEW
 ══════════════════════════════════════════ */
-function renderOverview(metrics, dates) {
-  // Count progress / regression / stable
-  let improved = 0, regressed = 0, stable = 0;
-  const allM = metrics.filter(m => !['Training'].includes(m.category));
-  allM.forEach(m => {
-    const d = delta(m, dates);
-    if (d == null || d === 0) { stable++; return; }
-    const cls = deltaClass(m.name, d);
-    if (cls === 'pos') improved++;
-    else if (cls === 'neg') regressed++;
-    else stable++;
-  });
-  const total = improved + regressed + stable;
+function openModal(encoded){
+  if(!_appData)return;
+  let info;
+  try{info=typeof encoded==='string'?JSON.parse(decodeURIComponent(encoded)):encoded;}
+  catch(e){return;}
+  const{cat,name,unit}=info;
+  const{metrics,dates}=_appData;
+  const m=getM(metrics,cat,name,unit);
+  if(!m)return;
 
-  // Key metrics from each category
-  const herzFq   = getM(metrics, 'Herz', 'Herzfrequenz');
-  const herzHrv  = getM(metrics, 'Herz', 'HRV-Trainingsbereitschaft');
-  const koerperW = getM(metrics, 'Körperanalyse', 'Gewicht', 'kg');
-  const muskel   = getM(metrics, 'Körperanalyse', 'Muskelmasse', 'kg');
-  const fettPct  = getM(metrics, 'Körperanalyse', 'Fettmasse ges. ', '%');
-  const bioAge   = getM(metrics, 'Stoffwechsel', 'Bio Age');
-  const zellfit  = getM(metrics, 'Stoffwechsel', 'Zellfitnesswert');
-  const o2       = getM(metrics, 'Stoffwechsel', 'Sauerstoffsättigung');
+  const vals=dates.map(d=>m.values[d]??null);
+  const filled=vals.filter(v=>v!=null);
+  if(!filled.length)return;
 
-  // Summary stat ring (just an inline SVG arc)
-  const impPct = total ? (improved / total) * 100 : 0;
-  const regPct = total ? (regressed / total) * 100 : 0;
+  const latestV=filled[filled.length-1];
+  const minV=Math.min(...filled),maxV=Math.max(...filled);
+  const avgV=filled.reduce((a,b)=>a+b,0)/filled.length;
+  const firstV=filled[0];
+  const totalDelta=latestV-firstV;
+  const dc=deltaClass(name,unit,totalDelta);
+  const deltaColor=dc==='pos'?'var(--pos)':dc==='neg'?'var(--neg)':'var(--text3)';
+  const deltaArrow=totalDelta>0?'▲':totalDelta<0?'▼':'';
+  const color=CAT_COLORS[cat]||COLORS[0];
 
-  const r2 = 40, cx2 = 50, cy2 = 50, tck = 10;
-  const arc = (pct, startPct, col) => {
-    if (pct <= 0) return '';
-    const full = 2 * Math.PI;
-    const start = (startPct / 100) * full - Math.PI / 2;
-    const end   = start + (pct / 100) * full - 0.05;
-    const x1 = cx2 + r2 * Math.cos(start), y1 = cy2 + r2 * Math.sin(start);
-    const x2 = cx2 + r2 * Math.cos(end),   y2 = cy2 + r2 * Math.sin(end);
-    const big = (pct / 100 * full) > Math.PI ? 1 : 0;
-    return `<path d="M ${x1.toFixed(1)} ${y1.toFixed(1)} A ${r2} ${r2} 0 ${big} 1 ${x2.toFixed(1)} ${y2.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${tck}" stroke-linecap="round"/>`;
-  };
+  document.getElementById('modal-title').textContent=name;
+  document.getElementById('modal-cat-badge').textContent=cat;
+  document.getElementById('modal-meta').textContent=`${filled.length} Messpunkte · Einheit: ${unit||'–'}`;
+  document.getElementById('modal-header').style.borderTopColor=color;
 
-  const ringSvg = `<svg viewBox="0 0 100 100" width="90" height="90" style="flex-shrink:0">
-    <circle cx="50" cy="50" r="${r2}" fill="none" stroke="#151e30" stroke-width="${tck}"/>
-    ${arc(impPct, 0, 'var(--pos)')}
-    ${arc(regPct, impPct, 'var(--neg)')}
-    <text x="50" y="46" text-anchor="middle" fill="#e8edf5" font-size="16" font-weight="800" font-family="Helvetica Neue,sans-serif">${improved}</text>
-    <text x="50" y="58" text-anchor="middle" fill="#7a8fa8" font-size="9" font-family="Helvetica Neue,sans-serif">verbessert</text>
-  </svg>`;
+  // Chart — full width, taller in modal
+  const chartHtml=lineChart([{label:name,values:vals,color}],dates,{h:250,yUnit:unit});
 
-  // Trend chart for body weight + muscle over all dates
-  let trendChart = '';
-  if (dates.length >= 2 && koerperW && muskel) {
-    const ds = [
-      { label: 'Gewicht', values: dates.map(d => koerperW.values[d] ?? null), color: COLORS[0] },
-      { label: 'Muskelmasse', values: dates.map(d => muskel.values[d] ?? null), color: COLORS[1] }
-    ];
-    trendChart = chartCard('Körper-Trend', 'Gewicht & Muskelmasse',
-      [{ n: 'Gewicht', c: COLORS[0] }, { n: 'Muskelmasse', c: COLORS[1] }],
-      lineChart(ds, dates, { yUnit: 'kg' }), 'full');
+  // Data table — newest first
+  let tableRows='';
+  for(let i=dates.length-1;i>=0;i--){
+    const v=m.values[dates[i]];
+    if(v==null)continue;
+    // find prev non-null
+    let prev=null;
+    for(let j=i-1;j>=0;j--){if(m.values[dates[j]]!=null){prev=m.values[dates[j]];break;}}
+    const rd=prev!=null?v-prev:null;
+    const rdc=deltaClass(name,unit,rd);
+    const dStr=rd!=null?`<span class="${rdc==='pos'?'delta-pos':rdc==='neg'?'delta-neg':'delta-neu'}">${rd>0?'+':''}${fmt(rd,2)} ${unit}</span>`:`<span class="delta-neu">–</span>`;
+    // mini sparkline indicator: little bar relative to range
+    const range=maxV-minV||1;
+    const barPct=Math.round(((v-minV)/range)*100);
+    const barColor=color;
+    tableRows+=`<tr>
+      <td class="td-date">${dates[i]}</td>
+      <td class="td-val">${fmt(v)} <span style="font-size:11px;color:var(--text3);font-weight:400">${unit}</span></td>
+      <td class="td-delta">${dStr}</td>
+      <td style="width:80px;padding:10px 10px 10px 0">
+        <div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden">
+          <div style="height:100%;width:${barPct}%;background:${barColor};border-radius:2px;opacity:.7"></div>
+        </div>
+      </td>
+    </tr>`;
   }
 
-  return `<div class="tab-content">
+  document.getElementById('modal-body').innerHTML=`
+    <div class="modal-accent-bar" style="background:linear-gradient(90deg,${color},transparent)"></div>
+    <div class="modal-stat-row">
+      <div class="modal-stat">
+        <div class="modal-stat-label">Aktuell</div>
+        <div class="modal-stat-val">${fmt(latestV)} <span style="font-size:12px;color:var(--text2);font-weight:500">${unit}</span></div>
+        <div class="modal-stat-sub">${dates.filter(d=>m.values[d]!=null).slice(-1)[0]||''}</div>
+      </div>
+      <div class="modal-stat">
+        <div class="modal-stat-label">Gesamt-Δ</div>
+        <div class="modal-stat-val" style="color:${deltaColor}">${deltaArrow} ${fmt(Math.abs(totalDelta),2)}</div>
+        <div class="modal-stat-sub">${fmtDelta(totalDelta)} ${unit} seit Start</div>
+      </div>
+      <div class="modal-stat">
+        <div class="modal-stat-label">Min · Max</div>
+        <div class="modal-stat-val" style="font-size:16px">${fmt(minV)} <span style="color:var(--text3)">·</span> ${fmt(maxV)}</div>
+        <div class="modal-stat-sub">${unit}</div>
+      </div>
+      <div class="modal-stat">
+        <div class="modal-stat-label">Ø Mittelwert</div>
+        <div class="modal-stat-val">${fmt(avgV,2)}</div>
+        <div class="modal-stat-sub">${unit}</div>
+      </div>
+    </div>
+    <div class="modal-chart-label">Gesamter Verlauf</div>
+    <div class="chart-wrap">${chartHtml}</div>
+    <table class="modal-data-table">
+      <thead><tr><th>Datum</th><th>Wert</th><th style="text-align:right">Änderung</th><th></th></tr></thead>
+      <tbody>${tableRows||'<tr><td colspan="4" style="color:var(--text3);text-align:center;padding:20px;font-style:italic">Keine Datenpunkte</td></tr>'}</tbody>
+    </table>`;
+
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  requestAnimationFrame(()=>{
+    document.getElementById('modal-box').scrollTop=0;
+  });
+}
+
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('modal-close').addEventListener('click',closeModal);
+document.getElementById('modal-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('modal-overlay'))closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+/* ── TABS ── */
+function renderOverview(metrics,dates){
+  let improved=0,regressed=0,stable=0;
+  metrics.filter(m=>m.category!=='Training').forEach(m=>{
+    const d=delta(m,dates);
+    const cls=d==null||d===0?'neu':deltaClass(m.name,m.unit,d);
+    if(cls==='pos')improved++;else if(cls==='neg')regressed++;else stable++;
+  });
+  const total=improved+regressed+stable;
+  const herzFq =getM(metrics,'Herz','Herzfrequenz');
+  const herzHrv=getM(metrics,'Herz','HRV-Trainingsbereitschaft');
+  const kgW    =getM(metrics,'Körperanalyse','Gewicht','kg');
+  const muskel =getM(metrics,'Körperanalyse','Muskelmasse','kg');
+  const fettPc =getM(metrics,'Körperanalyse','Fettmasse ges. ','%');
+  const bioAge =getM(metrics,'Stoffwechsel','Bio Age');
+  const zellfit=getM(metrics,'Stoffwechsel','Zellfitnesswert');
+  const o2     =getM(metrics,'Stoffwechsel','Sauerstoffsättigung');
+
+  const impPct=total?(improved/total)*100:0,regPct=total?(regressed/total)*100:0;
+  const r2=40,cx2=50,cy2=50,tck=10;
+  const arcSeg=(pct,startPct,col)=>{
+    if(pct<=0)return'';
+    const full=2*Math.PI,start=(startPct/100)*full-Math.PI/2,end=start+(pct/100)*full-0.05;
+    const x1=cx2+r2*Math.cos(start),y1=cy2+r2*Math.sin(start);
+    const x2=cx2+r2*Math.cos(end),y2=cy2+r2*Math.sin(end);
+    return`<path d="M ${x1.toFixed(1)} ${y1.toFixed(1)} A ${r2} ${r2} 0 ${(pct/100*full)>Math.PI?1:0} 1 ${x2.toFixed(1)} ${y2.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${tck}" stroke-linecap="round"/>`;
+  };
+  const ringSvg=`<svg viewBox="0 0 100 100" width="90" height="90" style="flex-shrink:0">
+    <circle cx="50" cy="50" r="${r2}" fill="none" stroke="#151e30" stroke-width="${tck}"/>
+    ${arcSeg(impPct,0,'var(--pos)')}${arcSeg(regPct,impPct,'var(--neg)')}
+    <text x="50" y="46" text-anchor="middle" fill="#e8edf5" font-size="16" font-weight="800" font-family="Helvetica Neue,sans-serif">${improved}</text>
+    <text x="50" y="58" text-anchor="middle" fill="#7a8fa8" font-size="9" font-family="Helvetica Neue,sans-serif">besser</text>
+  </svg>`;
+
+  let trendChart='';
+  if(kgW&&muskel){
+    const ds=[
+      {label:'Gewicht',values:dates.map(d=>kgW.values[d]??null),color:COLORS[0]},
+      {label:'Muskelmasse',values:dates.map(d=>muskel.values[d]??null),color:COLORS[1]},
+    ];
+    trendChart=chartCard('Körper-Trend','Gewicht & Muskelmasse',[{n:'Gewicht',c:COLORS[0]},{n:'Muskelmasse',c:COLORS[1]}],lineChart(ds,dates,{yUnit:'kg'}),'full');
+  }
+
+  return`<div class="tab-content">
     <div class="sec-label">Gesundheitsübersicht</div>
     <div class="grid-cards" style="margin-bottom:24px">
       <div class="overview-stat" style="grid-column:span 2">
         ${ringSvg}
         <div>
-          <div class="stat-label">Fortschrittsbilanz</div>
-          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
-            <span style="font-size:26px;font-weight:800;color:var(--pos)">${improved}</span>
-            <span style="font-size:13px;color:var(--text2)">verbessert</span>
-            <span style="font-size:26px;font-weight:800;color:var(--neg);margin-left:10px">${regressed}</span>
-            <span style="font-size:13px;color:var(--text2)">rückläufig</span>
-            <span style="font-size:26px;font-weight:800;color:var(--text3);margin-left:10px">${stable}</span>
-            <span style="font-size:13px;color:var(--text2)">stabil</span>
+          <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:5px">Fortschrittsbilanz</div>
+          <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap">
+            <span style="font-size:26px;font-weight:800;color:var(--pos)">${improved}</span><span style="font-size:13px;color:var(--text2)">verbessert</span>
+            <span style="font-size:26px;font-weight:800;color:var(--neg);margin-left:8px">${regressed}</span><span style="font-size:13px;color:var(--text2)">rückläufig</span>
+            <span style="font-size:26px;font-weight:800;color:var(--text3);margin-left:8px">${stable}</span><span style="font-size:13px;color:var(--text2)">stabil</span>
           </div>
-          <div class="stat-sub">${total} Metriken · ${dates.length} Messpunkte</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:3px">${total} Metriken · ${dates.length} Messpunkte</div>
         </div>
       </div>
-      ${metricCard('Herzfrequenz', herzFq, dates, { color: '#ff5252' })}
-      ${metricCard('HRV', herzHrv, dates, { color: '#4f9cf9' })}
-      ${metricCard('Gewicht', koerperW, dates, { color: '#00c9a7' })}
-      ${metricCard('Muskelmasse', muskel, dates, { color: '#ffb340' })}
-      ${metricCard('Körperfett', fettPct, dates, { color: '#c678dd' })}
-      ${metricCard('Bio Age', bioAge, dates, { color: '#4f9cf9' })}
-      ${metricCard('Zellfitnesswert', zellfit, dates, { color: '#00c9a7' })}
-      ${metricCard('O₂-Sättigung', o2, dates, { color: '#2fd180' })}
+      ${metricCard('Herzfrequenz',herzFq,dates,{color:'#ff5252'})}
+      ${metricCard('HRV',herzHrv,dates,{color:'#4f9cf9'})}
+      ${metricCard('Gewicht',kgW,dates,{color:'#00c9a7'})}
+      ${metricCard('Muskelmasse',muskel,dates,{color:'#ffb340'})}
+      ${metricCard('Körperfett',fettPc,dates,{color:'#c678dd'})}
+      ${metricCard('Bio Age',bioAge,dates,{color:'#4f9cf9'})}
+      ${metricCard('Zellfitnesswert',zellfit,dates,{color:'#00c9a7'})}
+      ${metricCard('O₂-Sättigung',o2,dates,{color:'#2fd180'})}
     </div>
     <div class="sec-label">Verlauf</div>
-    <div class="grid-charts">${trendChart || '<p style="color:var(--text3);font-size:13px">Mehr Messpunkte benötigt für Verlaufsdiagramme.</p>'}</div>
+    <div class="grid-charts">${trendChart||'<p style="color:var(--text3);font-size:13px">Mehr Messpunkte für Verlaufsdiagramme benötigt.</p>'}</div>
   </div>`;
 }
 
-/* ══════════════════════════════════════════
-   TAB: HERZ
-══════════════════════════════════════════ */
-function renderHerz(metrics, dates) {
-  const hfq = getM(metrics, 'Herz', 'Herzfrequenz');
-  const hrv = getM(metrics, 'Herz', 'HRV-Trainingsbereitschaft');
-  const mhf = getM(metrics, 'Herz', 'Max. Herzfrequenz');
-
-  let chartHtml = '<p style="color:var(--text3);font-size:12px">Nicht genügend Daten</p>';
-  if (dates.length >= 1) {
-    const ds = [];
-    if (hfq) ds.push({ label: 'Herzfrequenz', values: dates.map(d => hfq.values[d] ?? null), color: '#ff5252' });
-    if (hrv) ds.push({ label: 'HRV', values: dates.map(d => hrv.values[d] ?? null), color: '#4f9cf9' });
-    if (ds.length) chartHtml = lineChart(ds, dates, { yUnit: 'bpm / ms', h: 220 });
-  }
-
-  const legItems = [];
-  if (hfq) legItems.push({ n: 'Herzfrequenz (bpm)', c: '#ff5252' });
-  if (hrv) legItems.push({ n: 'HRV (ms)', c: '#4f9cf9' });
-
-  return `<div class="tab-content">
-    <div class="sec-label">Kennzahlen</div>
+function renderHerz(metrics,dates){
+  const hfq=getM(metrics,'Herz','Herzfrequenz');
+  const hrv=getM(metrics,'Herz','HRV-Trainingsbereitschaft');
+  const mhf=getM(metrics,'Herz','Max. Herzfrequenz');
+  const ds=[];
+  if(hfq)ds.push({label:'Herzfrequenz',values:dates.map(d=>hfq.values[d]??null),color:'#ff5252'});
+  if(hrv)ds.push({label:'HRV',values:dates.map(d=>hrv.values[d]??null),color:'#4f9cf9'});
+  const leg=[];
+  if(hfq)leg.push({n:'Herzfrequenz (bpm)',c:'#ff5252'});
+  if(hrv)leg.push({n:'HRV (ms)',c:'#4f9cf9'});
+  return`<div class="tab-content">
+    <div class="sec-label">Kennzahlen — tippen für Verlauf</div>
     <div class="grid-cards">
-      ${metricCard('Herzfrequenz', hfq, dates, { color: '#ff5252' })}
-      ${metricCard('HRV · Trainingsbereitschaft', hrv, dates, { color: '#4f9cf9' })}
-      ${metricCard('Max. Herzfrequenz', mhf, dates, { color: '#ffb340' })}
+      ${metricCard('Herzfrequenz',hfq,dates,{color:'#ff5252'})}
+      ${metricCard('HRV · Trainingsbereitschaft',hrv,dates,{color:'#4f9cf9'})}
+      ${metricCard('Max. Herzfrequenz',mhf,dates,{color:'#ffb340'})}
     </div>
     <div class="sec-label">Verlauf</div>
     <div class="grid-charts">
-      ${chartCard('Herzfrequenz & HRV', 'Ruheherzfrequenz vs. Herzratenvariabilität', legItems, chartHtml, 'full')}
+      ${chartCard('Herzfrequenz & HRV','Ruheherzfrequenz vs. Herzratenvariabilität',leg,
+        ds.length?lineChart(ds,dates,{h:220}):'<p style="color:var(--text3);font-size:12px">Nicht genügend Daten</p>','full')}
     </div>
   </div>`;
 }
 
-/* ══════════════════════════════════════════
-   TAB: KÖRPER
-══════════════════════════════════════════ */
-function renderKoerper(metrics, dates) {
-  const kgW    = getM(metrics, 'Körperanalyse', 'Gewicht', 'kg');
-  const muskel = getM(metrics, 'Körperanalyse', 'Muskelmasse', 'kg');
-  const fettKg = getM(metrics, 'Körperanalyse', 'Fettmasse ges. ', 'kg');
-  const fettPc = getM(metrics, 'Körperanalyse', 'Fettmasse ges. ', '%');
-  const leanPc = getM(metrics, 'Körperanalyse', 'Fettfreie Masse', '%');
-  const bmi    = getM(metrics, 'Körperanalyse', 'BMI');
-  const viz    = getM(metrics, 'Körperanalyse', 'Viszerales Fett', 'kg');
-  const wasser = getM(metrics, 'Körperanalyse', 'Wasser (Gesamt)', 'kg');
+function renderKoerper(metrics,dates){
+  const kgW   =getM(metrics,'Körperanalyse','Gewicht','kg');
+  const muskel=getM(metrics,'Körperanalyse','Muskelmasse','kg');
+  const fettKg=getM(metrics,'Körperanalyse','Fettmasse ges. ','kg');
+  const fettPc=getM(metrics,'Körperanalyse','Fettmasse ges. ','%');
+  const leanPc=getM(metrics,'Körperanalyse','Fettfreie Masse','%');
+  const bmi   =getM(metrics,'Körperanalyse','BMI');
+  const viz   =getM(metrics,'Körperanalyse','Viszerales Fett','kg');
+  const wasser=getM(metrics,'Körperanalyse','Wasser (Gesamt)','kg');
 
-  // Body segments
-  const segs = [
-    { key: 'Torso',       label: 'Torso' },
-    { key: 'Arm Rechts',  label: 'Arm Rechts' },
-    { key: 'Arm Links',   label: 'Arm Links' },
-    { key: 'Bein Rechts', label: 'Bein Rechts' },
-    { key: 'Bein Links',  label: 'Bein Links' },
-  ];
-
-  const latestDate = dates.length ? dates[dates.length - 1] : null;
-  const prevDate   = dates.length > 1 ? dates[dates.length - 2] : null;
-
-  const segItems = segs.map(s => {
-    const m = getM(metrics, 'Körperanalyse', s.key, 'kg');
-    if (!m) return null;
-    const v = latestDate ? (m.values[latestDate] ?? null) : null;
-    if (v == null) return null;
-    const p = prevDate ? (m.values[prevDate] ?? null) : null;
-    return { label: s.label, v, delta: p != null ? v - p : null };
+  const segKeys=['Torso','Arm Rechts','Arm Links','Bein Rechts','Bein Links'];
+  const ld=dates.length?dates[dates.length-1]:null;
+  const pd=dates.length>1?dates[dates.length-2]:null;
+  const segItems=segKeys.map(k=>{
+    const m2=getM(metrics,'Körperanalyse',k,'kg');if(!m2)return null;
+    const v=ld?(m2.values[ld]??null):null;if(v==null)return null;
+    const p=pd?(m2.values[pd]??null):null;
+    return{label:k,v,delta:p!=null?v-p:null,cat:'Körperanalyse',unit:'kg'};
   }).filter(Boolean);
+  const maxSeg=Math.max(...segItems.map(s=>s.v),0)*1.2;
 
-  const maxSeg = Math.max(...segItems.map(s => s.v), 0) * 1.2;
+  const wDs=[];
+  if(kgW)   wDs.push({label:'Gewicht',   values:dates.map(d=>kgW.values[d]??null),   color:COLORS[0]});
+  if(muskel)wDs.push({label:'Muskelmasse',values:dates.map(d=>muskel.values[d]??null),color:COLORS[1]});
+  if(fettKg)wDs.push({label:'Fettmasse', values:dates.map(d=>fettKg.values[d]??null),color:'#ff5252'});
+  const wLeg=[];
+  if(kgW)   wLeg.push({n:'Gewicht',c:COLORS[0]});
+  if(muskel)wLeg.push({n:'Muskelmasse',c:COLORS[1]});
+  if(fettKg)wLeg.push({n:'Fettmasse',c:'#ff5252'});
 
-  // Weight + muscle chart
-  let wChartHtml = '';
-  if (dates.length >= 1 && (kgW || muskel)) {
-    const ds = [];
-    if (kgW)    ds.push({ label: 'Gewicht', values: dates.map(d => kgW.values[d] ?? null), color: COLORS[0] });
-    if (muskel) ds.push({ label: 'Muskelmasse', values: dates.map(d => muskel.values[d] ?? null), color: COLORS[1] });
-    if (fettKg) ds.push({ label: 'Fettmasse', values: dates.map(d => fettKg.values[d] ?? null), color: '#ff5252' });
-    wChartHtml = lineChart(ds, dates, { yUnit: 'kg', h: 210 });
+  const cDs=[];
+  if(leanPc)cDs.push({label:'Fettfreie Masse',values:dates.map(d=>leanPc.values[d]??null),color:COLORS[0]});
+  if(fettPc)cDs.push({label:'Fettmasse',      values:dates.map(d=>fettPc.values[d]??null),color:'#ff5252'});
+  const cLeg=[];
+  if(leanPc)cLeg.push({n:'Fettfreie Masse',c:COLORS[0]});
+  if(fettPc)cLeg.push({n:'Fettmasse',c:'#ff5252'});
+
+  let donutHtml='';
+  if(ld&&leanPc&&fettPc){
+    donutHtml=donutChart([
+      {name:'Fettfreie Masse',v:leanPc.values[ld]??0,color:COLORS[0]},
+      {name:'Fettmasse ges.',v:fettPc.values[ld]??0,color:'#ff5252'},
+    ],{size:160,thick:28});
   }
 
-  // Lean / fat % chart
-  let compChartHtml = '';
-  if (dates.length >= 1 && (leanPc || fettPc)) {
-    const ds = [];
-    if (leanPc) ds.push({ label: 'Fettfreie Masse', values: dates.map(d => leanPc.values[d] ?? null), color: COLORS[0] });
-    if (fettPc) ds.push({ label: 'Fettmasse', values: dates.map(d => fettPc.values[d] ?? null), color: '#ff5252' });
-    compChartHtml = lineChart(ds, dates, { yUnit: '%', h: 210 });
-  }
-
-  // Donut: body composition (latest)
-  let donutHtml = '';
-  if (latestDate && leanPc && fettPc) {
-    const lv = leanPc.values[latestDate] ?? 0;
-    const fv = fettPc.values[latestDate] ?? 0;
-    const segsDonut = [
-      { name: 'Fettfreie Masse', v: lv, color: COLORS[0] },
-      { name: 'Fettmasse ges.', v: fv, color: '#ff5252' },
-    ];
-    donutHtml = donutChart(segsDonut, { size: 160, thick: 28 });
-  }
-
-  const wChartLeg = [];
-  if (kgW)    wChartLeg.push({ n: 'Gewicht', c: COLORS[0] });
-  if (muskel) wChartLeg.push({ n: 'Muskelmasse', c: COLORS[1] });
-  if (fettKg) wChartLeg.push({ n: 'Fettmasse', c: '#ff5252' });
-
-  const compLeg = [];
-  if (leanPc) compLeg.push({ n: 'Fettfreie Masse', c: COLORS[0] });
-  if (fettPc) compLeg.push({ n: 'Fettmasse', c: '#ff5252' });
-
-  return `<div class="tab-content">
-    <div class="sec-label">Körperkennzahlen</div>
-    <div class="grid-cards">
-      ${metricCard('Gewicht', kgW, dates, { color: '#00c9a7' })}
-      ${metricCard('Muskelmasse', muskel, dates, { color: '#ffb340' })}
-      ${metricCard('Fettmasse', fettKg, dates, { color: '#ff5252' })}
-      ${metricCard('BMI', bmi, dates, { color: '#4f9cf9' })}
-      ${metricCard('Viszerales Fett', viz, dates, { color: '#ff5252' })}
-      ${metricCard('Gesamtwasser', wasser, dates, { color: '#20c1e9' })}
-    </div>
-    <div class="sec-label">Verlauf & Zusammensetzung</div>
-    <div class="grid-charts grid-charts">
-      ${wChartHtml ? chartCard('Gewicht & Masse', 'in Kilogramm', wChartLeg, wChartHtml) : ''}
-      ${compChartHtml ? chartCard('Körperzusammensetzung', 'Anteil in Prozent', compLeg, compChartHtml) : ''}
-      ${donutHtml ? chartCard('Aktuelle Verteilung', dates.length ? dates[dates.length - 1] : '', [], donutHtml) : ''}
-      ${segItems.length ? chartCard('Muskelmasse nach Segment', 'in Kilogramm',
-        [], `<div style="padding:4px 0">${hBars(segItems, maxSeg, { color: 'var(--teal)', unit: 'kg' })}</div>`) : ''}
-    </div>
-  </div>`;
-}
-
-/* ══════════════════════════════════════════
-   TAB: STOFFWECHSEL
-══════════════════════════════════════════ */
-function renderStoffwechsel(metrics, dates) {
-  const bioAge = getM(metrics, 'Stoffwechsel', 'Bio Age');
-  const zell   = getM(metrics, 'Stoffwechsel', 'Zellfitnesswert');
-  const o2     = getM(metrics, 'Stoffwechsel', 'Sauerstoffsättigung');
-  const wHaus  = getM(metrics, 'Stoffwechsel', 'Wasserhaushalt');
-  const iwZ    = getM(metrics, 'Stoffwechsel', 'Intrazelluläres Wasser');
-  const ewZ    = getM(metrics, 'Stoffwechsel', 'Extrazelluläres Wasser');
-
-  let waterChart = '';
-  if (dates.length >= 1 && (iwZ || ewZ)) {
-    const ds = [];
-    if (iwZ) ds.push({ label: 'Intrazellulär', values: dates.map(d => iwZ.values[d] ?? null), color: COLORS[0] });
-    if (ewZ) ds.push({ label: 'Extrazellulär', values: dates.map(d => ewZ.values[d] ?? null), color: COLORS[1] });
-    waterChart = lineChart(ds, dates, { yUnit: 'kg', h: 210 });
-  }
-
-  const watLeg = [];
-  if (iwZ) watLeg.push({ n: 'Intrazelluläres Wasser (kg)', c: COLORS[0] });
-  if (ewZ) watLeg.push({ n: 'Extrazelluläres Wasser (kg)', c: COLORS[1] });
-
-  // Zellfitwert + Wasserhaushalt chart
-  let zellChart = '';
-  if (dates.length >= 1 && (zell || wHaus)) {
-    const ds = [];
-    if (zell)  ds.push({ label: 'Zellfitnesswert (°)', values: dates.map(d => zell.values[d] ?? null), color: COLORS[2] });
-    if (wHaus) ds.push({ label: 'Wasserhaushalt (%)', values: dates.map(d => wHaus.values[d] ?? null), color: COLORS[3] });
-    zellChart = lineChart(ds, dates, { h: 210 });
-  }
-  const zellLeg = [];
-  if (zell)  zellLeg.push({ n: 'Zellfitnesswert', c: COLORS[2] });
-  if (wHaus) zellLeg.push({ n: 'Wasserhaushalt', c: COLORS[3] });
-
-  return `<div class="tab-content">
-    <div class="sec-label">Stoffwechselkennzahlen</div>
-    <div class="grid-cards">
-      ${metricCard('Biologisches Alter', bioAge, dates, { color: '#4f9cf9' })}
-      ${metricCard('Zellfitnesswert', zell, dates, { color: '#ffb340' })}
-      ${metricCard('O₂-Sättigung', o2, dates, { color: '#2fd180' })}
-      ${metricCard('Wasserhaushalt', wHaus, dates, { color: '#20c1e9' })}
-    </div>
-    <div class="sec-label">Verlauf</div>
-    <div class="grid-charts">
-      ${waterChart ? chartCard('Wasserverteilung', 'Intra- & Extrazelluläres Wasser', watLeg, waterChart) : ''}
-      ${zellChart ? chartCard('Zellfitness & Wasserhaushalt', 'Phasenwinkel & Prozent', zellLeg, zellChart) : ''}
-    </div>
-  </div>`;
-}
-
-/* ══════════════════════════════════════════
-   TAB: TRAINING
-══════════════════════════════════════════ */
-function renderTraining(metrics, dates) {
-  const trainM = getCat(metrics, 'Training');
-  if (!trainM.length) {
-    return `<div class="tab-content">
-      <div class="sec-label">Training</div>
-      <p style="color:var(--text3);font-size:13px;padding:20px 0">Keine Trainingsdaten vorhanden.</p>
-    </div>`;
-  }
-
-  // Group by exercise name
-  const exerciseMap = {};
-  trainM.forEach(m => {
-    if (!exerciseMap[m.name]) exerciseMap[m.name] = {};
-    exerciseMap[m.name][m.unit] = m;
-  });
-
-  const latestDate = dates.length ? dates[dates.length - 1] : null;
-  const prevDate   = dates.length > 1 ? dates[dates.length - 2] : null;
-
-  const unitLabels = { reps: 'Wdh.', kg: 'kg', lbs: 'lbs' };
-
-  const cards = Object.entries(exerciseMap).map(([name, units]) => {
-    const rows = Object.entries(units).map(([unit, m]) => {
-      const lv = latestDate ? (m.values[latestDate] ?? null) : null;
-      const pv = prevDate   ? (m.values[prevDate]   ?? null) : null;
-      if (lv == null) return '';
-      const d2 = pv != null ? lv - pv : null;
-      const dHtml = d2 != null && d2 !== 0
-        ? `<span style="font-size:11px;color:${d2 > 0 ? 'var(--pos)' : 'var(--neg)'};">${d2 > 0 ? '+' : ''}${fmt(d2)}</span>`
-        : '';
-      return `<div class="ex-row">
-        <span class="ex-type">${unitLabels[unit] || unit}</span>
-        <div style="display:flex;align-items:center;gap:6px">
-          ${dHtml}
-          <div class="ex-val-row">
-            <span class="ex-val">${fmt(lv, 1)}</span>
-            <span class="ex-unit">${unitLabels[unit] || unit}</span>
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-
-    return `<div class="ex-card">
-      <div class="ex-name">${name}</div>
-      ${rows}
+  const segBarHtml=segItems.map(it=>{
+    const pct=maxSeg>0?Math.min(100,(it.v/maxSeg)*100):0;
+    const d2=it.delta;
+    const dHtml=d2!=null&&d2!==0?`<span class="hbar-delta" style="color:${d2>0?'var(--pos)':'var(--neg)'}">${d2>0?'+':''}${fmt(d2,2)} kg</span>`:'';
+    const enc=encodeURIComponent(JSON.stringify({cat:'Körperanalyse',name:it.label,unit:'kg'}));
+    return`<div class="hbar-item" onclick="openModal('${enc}')">
+      <div class="hbar-hdr"><span class="hbar-name">${it.label}</span>
+        <div class="hbar-right">${dHtml}<span class="hbar-val">${fmt(it.v,2)} kg</span></div></div>
+      <div class="hbar-track"><div class="hbar-fill" style="background:var(--teal)" data-pct="${pct.toFixed(1)}"></div></div>
     </div>`;
   }).join('');
 
-  // Progress charts for exercises with multiple date points
-  const progressCharts = [];
-  Object.entries(exerciseMap).forEach(([name, units]) => {
-    const kgM = units['kg'] || units['lbs'] || units['reps'];
-    if (!kgM) return;
-    const vals = dates.map(d => kgM.values[d] ?? null);
-    const hasMultiple = vals.filter(v => v != null).length >= 2;
-    if (!hasMultiple) return;
-    const unit = Object.keys(units)[0];
-    const ds = [{ label: name, values: vals, color: COLORS[progressCharts.length % COLORS.length] }];
-    progressCharts.push(chartCard(name, unit, [{ n: name, c: COLORS[progressCharts.length % COLORS.length] }],
-      lineChart(ds, dates, { yUnit: unit, h: 180 })));
-  });
-
-  return `<div class="tab-content">
-    <div class="sec-label">Aktuelle Leistung</div>
-    <div class="grid-ex">${cards}</div>
-    ${progressCharts.length ? `
-      <div class="sec-label">Fortschritt</div>
-      <div class="grid-charts">${progressCharts.join('')}</div>` : ''}
+  return`<div class="tab-content">
+    <div class="sec-label">Körperkennzahlen — tippen für Verlauf</div>
+    <div class="grid-cards">
+      ${metricCard('Gewicht',kgW,dates,{color:'#00c9a7'})}
+      ${metricCard('Muskelmasse',muskel,dates,{color:'#ffb340'})}
+      ${metricCard('Fettmasse',fettKg,dates,{color:'#ff5252'})}
+      ${metricCard('BMI',bmi,dates,{color:'#4f9cf9'})}
+      ${metricCard('Viszerales Fett',viz,dates,{color:'#ff5252'})}
+      ${metricCard('Gesamtwasser',wasser,dates,{color:'#20c1e9'})}
+    </div>
+    <div class="sec-label">Verlauf & Zusammensetzung</div>
+    <div class="grid-charts">
+      ${wDs.length?chartCard('Gewicht & Masse','in Kilogramm',wLeg,lineChart(wDs,dates,{yUnit:'kg',h:210})):''}
+      ${cDs.length?chartCard('Körperzusammensetzung','Anteil in Prozent',cLeg,lineChart(cDs,dates,{yUnit:'%',h:210})):''}
+      ${donutHtml?chartCard('Aktuelle Verteilung',ld||'',[], donutHtml):''}
+      ${segItems.length?chartCard('Muskelmasse nach Segment','kg — tippen für Verlauf',[],`<div style="padding:4px 0">${segBarHtml}</div>`):''}
+    </div>
   </div>`;
 }
 
-/* ══════════════════════════════════════════
-   DASHBOARD RENDER
-══════════════════════════════════════════ */
-let _appData = null;
-let _activeTab = 'overview';
+function renderStoffwechsel(metrics,dates){
+  const bioAge=getM(metrics,'Stoffwechsel','Bio Age');
+  const zell  =getM(metrics,'Stoffwechsel','Zellfitnesswert');
+  const o2    =getM(metrics,'Stoffwechsel','Sauerstoffsättigung');
+  const wHaus =getM(metrics,'Stoffwechsel','Wasserhaushalt');
+  const iwZ   =getM(metrics,'Stoffwechsel','Intrazelluläres Wasser');
+  const ewZ   =getM(metrics,'Stoffwechsel','Extrazelluläres Wasser');
 
-function renderDashboard(data) {
-  _appData = data;
-  const db = document.getElementById('dashboard');
-  const empty = document.getElementById('empty-state');
-  const nav = document.getElementById('tabs-nav');
-  const btnClear = document.getElementById('btn-clear');
-  const lastUpd = document.getElementById('last-updated');
+  const wDs=[];
+  if(iwZ)wDs.push({label:'Intrazellulär',values:dates.map(d=>iwZ.values[d]??null),color:COLORS[0]});
+  if(ewZ)wDs.push({label:'Extrazellulär',values:dates.map(d=>ewZ.values[d]??null),color:COLORS[1]});
+  const wLeg=[];
+  if(iwZ)wLeg.push({n:'Intrazelluläres Wasser (kg)',c:COLORS[0]});
+  if(ewZ)wLeg.push({n:'Extrazelluläres Wasser (kg)',c:COLORS[1]});
 
-  empty.style.display = 'none';
-  db.style.display = 'block';
-  nav.style.display = 'flex';
-  btnClear.style.display = 'flex';
+  const zDs=[];
+  if(zell) zDs.push({label:'Zellfitnesswert',values:dates.map(d=>zell.values[d]??null),color:COLORS[2]});
+  if(wHaus)zDs.push({label:'Wasserhaushalt', values:dates.map(d=>wHaus.values[d]??null),color:COLORS[3]});
+  const zLeg=[];
+  if(zell) zLeg.push({n:'Zellfitnesswert',c:COLORS[2]});
+  if(wHaus)zLeg.push({n:'Wasserhaushalt',c:COLORS[3]});
 
-  if (data.importedAt) {
-    const d = new Date(data.importedAt);
-    lastUpd.textContent = 'Stand: ' + d.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric' });
+  return`<div class="tab-content">
+    <div class="sec-label">Stoffwechselkennzahlen — tippen für Verlauf</div>
+    <div class="grid-cards">
+      ${metricCard('Biologisches Alter',bioAge,dates,{color:'#4f9cf9'})}
+      ${metricCard('Zellfitnesswert',zell,dates,{color:'#ffb340'})}
+      ${metricCard('O₂-Sättigung',o2,dates,{color:'#2fd180'})}
+      ${metricCard('Wasserhaushalt',wHaus,dates,{color:'#20c1e9'})}
+    </div>
+    <div class="sec-label">Verlauf</div>
+    <div class="grid-charts">
+      ${wDs.length?chartCard('Wasserverteilung','Intra- & Extrazelluläres Wasser',wLeg,lineChart(wDs,dates,{yUnit:'kg',h:210})):''}
+      ${zDs.length?chartCard('Zellfitness & Wasserhaushalt','Phasenwinkel & Prozent',zLeg,lineChart(zDs,dates,{h:210})):''}
+    </div>
+  </div>`;
+}
+
+/* ── TRAINING — fully dynamic ── */
+function renderTraining(metrics,dates){
+  const trainM=getCat(metrics,'Training');
+  if(!trainM.length)return`<div class="tab-content">
+    <div class="sec-label">Training</div>
+    <p style="color:var(--text3);font-size:13px;padding:24px 0">Keine Trainingsdaten in der CSV gefunden.<br>Füge Übungen in der Kategorie "Training" hinzu — sie erscheinen automatisch hier.</p>
+  </div>`;
+
+  // Group by exercise name, then by unit
+  const exerciseMap={};
+  trainM.forEach(m=>{
+    if(!exerciseMap[m.name])exerciseMap[m.name]={};
+    exerciseMap[m.name][m.unit]=m;
+  });
+
+  const ld=dates.length?dates[dates.length-1]:null;
+  const pd=dates.length>1?dates[dates.length-2]:null;
+  const uLabel={reps:'Wdh.',kg:'kg',lbs:'lbs'};
+
+  // Summary cards
+  const cards=Object.entries(exerciseMap).map(([name,units])=>{
+    const rows=Object.entries(units).map(([unit,m])=>{
+      const lv=ld?(m.values[ld]??null):null;
+      const pv=pd?(m.values[pd]??null):null;
+      if(lv==null)return'';
+      const rd=pv!=null?lv-pv:null;
+      const dHtml=rd!=null&&rd!==0?`<span style="font-size:11px;color:${rd>0?'var(--pos)':'var(--neg)'};">${rd>0?'+':''}${fmt(rd)}</span>`:'';
+      const enc=encodeURIComponent(JSON.stringify({cat:'Training',name,unit}));
+      return`<div class="ex-row" onclick="openModal('${enc}')">
+        <span class="ex-type">${uLabel[unit]||unit}</span>
+        <div style="display:flex;align-items:center;gap:7px">
+          ${dHtml}
+          <div class="ex-val-row"><span class="ex-val">${fmt(lv,1)}</span><span class="ex-unit">${uLabel[unit]||unit}</span></div>
+        </div>
+      </div>`;
+    }).filter(Boolean).join('');
+    if(!rows)return'';
+    return`<div class="ex-card"><div class="ex-name" title="${name}">${name}</div>${rows}</div>`;
+  }).filter(Boolean).join('');
+
+  // Progress charts (≥2 data points)
+  const progressCharts=[];
+  Object.entries(exerciseMap).forEach(([name,units],ei)=>{
+    const allDss=Object.entries(units).map(([unit,m],ui)=>({
+      label:`${uLabel[unit]||unit}`,
+      values:dates.map(d=>m.values[d]??null),
+      color:COLORS[(ei*3+ui)%COLORS.length],
+    }));
+    if(!allDss.some(ds=>ds.values.filter(v=>v!=null).length>=2))return;
+    progressCharts.push(chartCard(name,'Trainingsfortschritt',
+      allDss.map(ds=>({n:ds.label,c:ds.color})),
+      lineChart(allDss,dates,{h:190})));
+  });
+
+  return`<div class="tab-content">
+    <div class="sec-label">Aktuelle Leistung — Zeile tippen für Verlauf</div>
+    <div class="grid-ex">${cards||'<p style="color:var(--text3);font-size:13px">Keine Werte für das neueste Datum</p>'}</div>
+    ${progressCharts.length?`<div class="sec-label">Fortschritt</div><div class="grid-charts">${progressCharts.join('')}</div>`:''}
+  </div>`;
+}
+
+/* ── RENDER ENGINE ── */
+let _appData=null,_activeTab='overview';
+
+function renderDashboard(data){
+  _appData=data;
+  document.getElementById('empty-state').style.display='none';
+  document.getElementById('dashboard').style.display='block';
+  document.getElementById('tabs-nav').style.display='flex';
+  document.getElementById('btn-clear').style.display='flex';
+  if(data.importedAt){
+    const d=new Date(data.importedAt);
+    document.getElementById('last-updated').textContent='Stand: '+d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});
   }
-
   renderTab(_activeTab);
 }
 
-function renderTab(tab) {
-  _activeTab = tab;
-  const db = document.getElementById('dashboard');
-  const { metrics, dates } = _appData;
-
-  // Animate out
-  db.style.opacity = '0';
-  requestAnimationFrame(() => {
-    let html = '';
-    if (tab === 'overview')    html = renderOverview(metrics, dates);
-    else if (tab === 'herz')   html = renderHerz(metrics, dates);
-    else if (tab === 'koerper') html = renderKoerper(metrics, dates);
-    else if (tab === 'stoffwechsel') html = renderStoffwechsel(metrics, dates);
-    else if (tab === 'training') html = renderTraining(metrics, dates);
-    db.innerHTML = html;
-    db.style.opacity = '1';
-    db.style.transition = 'opacity 0.25s ease';
-
-    // Animate h-bars in
-    requestAnimationFrame(() => {
-      db.querySelectorAll('.hbar-fill[data-pct]').forEach(el => {
-        el.style.width = el.dataset.pct + '%';
-      });
+function renderTab(tab){
+  _activeTab=tab;
+  const db=document.getElementById('dashboard');
+  const{metrics,dates}=_appData;
+  db.style.opacity='0';
+  requestAnimationFrame(()=>{
+    let html='';
+    if     (tab==='overview')    html=renderOverview(metrics,dates);
+    else if(tab==='herz')        html=renderHerz(metrics,dates);
+    else if(tab==='koerper')     html=renderKoerper(metrics,dates);
+    else if(tab==='stoffwechsel')html=renderStoffwechsel(metrics,dates);
+    else if(tab==='training')    html=renderTraining(metrics,dates);
+    db.innerHTML=html;
+    db.style.opacity='1';
+    db.style.transition='opacity .22s ease';
+    requestAnimationFrame(()=>{
+      db.querySelectorAll('.hbar-fill[data-pct]').forEach(el=>{el.style.width=el.dataset.pct+'%';});
     });
   });
 }
 
-/* ══════════════════════════════════════════
-   UPLOAD HANDLING
-══════════════════════════════════════════ */
-function handleFile(file) {
-  if (!file || !file.name.endsWith('.csv')) {
-    alert('Bitte eine CSV-Datei auswählen.');
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const text = e.target.result;
-    const rows = parseCSV(text);
-    const data = processData(rows);
-    if (!data || !data.metrics.length) {
-      alert('Konnte Datei nicht lesen. Bitte überprüfe das Format.');
-      return;
-    }
-    data.importedAt = new Date().toISOString();
-    saveData(data);
-    renderDashboard(data);
+/* ── FILE HANDLING ── */
+function handleFile(file){
+  if(!file||!file.name.toLowerCase().endsWith('.csv')){alert('Bitte eine .csv Datei wählen.');return;}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const data=processData(parseCSV(e.target.result));
+    if(!data||!data.metrics.length){alert('Datei konnte nicht verarbeitet werden.');return;}
+    data.importedAt=new Date().toISOString();
+    saveData(data);renderDashboard(data);
   };
-  reader.readAsText(file, 'UTF-8');
+  reader.readAsText(file,'UTF-8');
 }
 
-/* ══════════════════════════════════════════
-   APP INIT
-══════════════════════════════════════════ */
-function init() {
-  // Load from storage
-  const saved = loadData();
-  if (saved && saved.metrics && saved.dates) {
-    renderDashboard(saved);
-  }
+/* ── INIT ── */
+function init(){
+  const saved=loadData();
+  if(saved&&saved.metrics&&saved.dates)renderDashboard(saved);
 
-  // Tab clicks
-  document.getElementById('tabs-nav').addEventListener('click', e => {
-    const tab = e.target.closest('.tab');
-    if (!tab) return;
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
-    tab.classList.add('on');
-    renderTab(tab.dataset.tab);
+  document.getElementById('tabs-nav').addEventListener('click',e=>{
+    const tab=e.target.closest('.tab');if(!tab)return;
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+    tab.classList.add('on');renderTab(tab.dataset.tab);
   });
 
-  // Upload button
-  document.getElementById('btn-upload').addEventListener('click', () => {
-    document.getElementById('file-input').click();
-  });
+  document.getElementById('btn-upload').addEventListener('click',()=>document.getElementById('file-input').click());
+  document.getElementById('file-input').addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0]);e.target.value='';});
 
-  // File input
-  document.getElementById('file-input').addEventListener('change', e => {
-    if (e.target.files[0]) handleFile(e.target.files[0]);
-    e.target.value = '';
-  });
+  const dz=document.getElementById('drop-zone');
+  dz.addEventListener('click',()=>document.getElementById('file-input').click());
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0]);});
+  document.addEventListener('dragover',e=>e.preventDefault());
+  document.addEventListener('drop',e=>{e.preventDefault();if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0]);});
 
-  // Drop zone (empty state)
-  const dz = document.getElementById('drop-zone');
-  dz.addEventListener('click', () => document.getElementById('file-input').click());
-  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
-  dz.addEventListener('dragleave', () => dz.classList.remove('over'));
-  dz.addEventListener('drop', e => {
-    e.preventDefault();
-    dz.classList.remove('over');
-    if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
-  });
-
-  // Drag & drop on whole page (when data already loaded)
-  document.addEventListener('dragover', e => e.preventDefault());
-  document.addEventListener('drop', e => {
-    e.preventDefault();
-    if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
-  });
-
-  // Clear button
-  document.getElementById('btn-clear').addEventListener('click', () => {
-    if (confirm('Alle Daten löschen?')) {
-      clearData();
-      _appData = null;
-      _activeTab = 'overview';
-      document.getElementById('dashboard').style.display = 'none';
-      document.getElementById('empty-state').style.display = 'flex';
-      document.getElementById('tabs-nav').style.display = 'none';
-      document.getElementById('btn-clear').style.display = 'none';
-      document.getElementById('last-updated').textContent = '';
-      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('on', i === 0));
-    }
+  document.getElementById('btn-clear').addEventListener('click',()=>{
+    if(!confirm('Alle gespeicherten Daten löschen?'))return;
+    clearData();_appData=null;_activeTab='overview';
+    document.getElementById('dashboard').style.display='none';
+    document.getElementById('empty-state').style.display='flex';
+    document.getElementById('tabs-nav').style.display='none';
+    document.getElementById('btn-clear').style.display='none';
+    document.getElementById('last-updated').textContent='';
+    document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('on',i===0));
   });
 }
-
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>
 </html>
